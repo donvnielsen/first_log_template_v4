@@ -8,7 +8,7 @@ class Db
 
   def initialize(fname=':memory:')
     @fname = fname
-    build_db
+    @db = SQLite3::Database.new(self.fname)
   end
 
   def append_block(name)
