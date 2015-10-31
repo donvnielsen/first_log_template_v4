@@ -11,6 +11,32 @@ class Instruction < ActiveRecord::Base
 
   attr_readonly :seq_id,:block_id,:is_fname
 
+  def before_create
+    max = Instruction.where('block_id = ?',self.block_id).maximum(:seq_id) || 0
+    self.seq_id =
+        case
+          when !@params.has_key?(:at) #append
+            max += 1
+          when @params[:at] < 1 || @params[:at] > max
+            raise ArgumentError, "Specified :at(#{@params[:at]}) is outside the range 1..#{max}"
+          else
+#             sql = <<eos
+# update #{Instruction.table_name}
+# set seq_id = seq_id + 1
+# where block_id = #{self.block_id} and seq_id >= #{@params[:at]}
+# eos
+            # ActiveRecord::Base.connection.execute(sql)
+            # pp Instruction.where( 'block_id = ? and seq_id >= ?',self.block_id,@params[:at] ).to_sql
+            ii = Instruction.where( 'block_id = ? and seq_id >= ?',self.block_id,@params[:at] )
+            ii.each {|i| i.update(seq_id:i.seq_id+1) ;pp i}
+            @params[:at]
+        end
+  end
+
+  def after_destroy
+    raise NotImplementedError
+  end
+
   def Instruction.arg_loc=(o)
     raise ArgumentError,"Arg location value must be numeric #{o}" if /\D/.match(o.to_s)
     @@arg_loc = o.to_i

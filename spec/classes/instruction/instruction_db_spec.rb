@@ -136,10 +136,10 @@ module FirstLogicTemplate
   
   describe 'delete' do
     before(:all) do
-      append_ins('First delete = 1st arg',5)  #seq_id = 1
-      append_ins('Second delete = 2nd arg',5) #seq_id = 2
-      append_ins('Third delete = 3rd arg',5)  #seq_id = 3
-      append_ins('Fourth delete = 4th arg',5)  #seq_id = 3
+      append_ins('First delete = 1st arg',5)
+      append_ins('Second delete = 2nd arg',5)
+      append_ins('Third delete = 3rd arg',5)
+      append_ins('Fourth delete = 4th arg',5)
     end
 
     context 'delete' do
