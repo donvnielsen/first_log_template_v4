@@ -7,7 +7,7 @@ class Instruction < ActiveRecord::Base
   validates :block_id, presence:true
 
   after_validation :fname_transformations
-  after_validation :set_seq_id, on: :create
+  before_save :set_seq_id, on: [:create,:save]
 
   attr_readonly :seq_id,:block_id,:is_fname
 
