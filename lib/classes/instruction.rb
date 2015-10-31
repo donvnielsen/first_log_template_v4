@@ -6,10 +6,18 @@ class Instruction < ActiveRecord::Base
   validates :parm, presence:true
   validates :block_id, presence:true
 
-  after_validation :fname_transformations
-  before_save :set_seq_id, on: [:create,:save]
+  before_validation :set_seq_id, on: [:create,:save]
+  before_validation :fname_transformations
 
-  attr_readonly :seq_id,:block_id,:is_fname
+  # delete_all requires an array in the form [sql,block_id,...]
+  # the array is passed on thru super
+  # then block_id is used to resequence the seq_id
+  def Instruction.delete_all(ary)
+    x = super(ary)
+    ii = Instruction.where( 'block_id = ?',ary[1]).order(:seq_id)
+    ii.each_with_index {|i,j| i.update(seq_id:j+1) }
+    x  # the number of deleted rows must be returned
+  end
 
   def Instruction.arg_loc=(o)
     raise ArgumentError,"Arg location value must be numeric #{o}" if /\D/.match(o.to_s)
@@ -108,15 +116,17 @@ class Instruction < ActiveRecord::Base
       when @params[:at] < 1 || @params[:at] > max
         raise ArgumentError, "Specified :at(#{@params[:at]}) is outside the range 1..#{max}"
       else
-        sql = <<eos
-update #{Instruction.table_name}
-set seq_id = seq_id + 1
-where block_id = #{self.block_id} and seq_id >= #{@params[:at]}
-eos
-        ActiveRecord::Base.connection.execute(sql)
+#         sql = <<eos
+# update #{Instruction.table_name}
+# set seq_id = seq_id + 1
+# where block_id = #{self.block_id} and seq_id >= #{@params[:at]}
+# eos
+#         ActiveRecord::Base.connection.execute(sql)
         # pp Instruction.where( 'block_id = ? and seq_id >= ?',self.block_id,@params[:at] ).to_sql
-        # ii = Instruction.where( 'block_id = ? and seq_id >= ?',self.block_id,@params[:at] )
-        # ii.each {|i| i.update(seq_id:i.seq_id+1) ;pp i}
+        ii = Instruction.
+            where( 'block_id = ? and seq_id >= ?',self.block_id,@params[:at] ).
+            order(:block_id,:seq_id)
+        ii.each {|i| i.update(seq_id:i.seq_id+1) }
         @params[:at]
     end
   end

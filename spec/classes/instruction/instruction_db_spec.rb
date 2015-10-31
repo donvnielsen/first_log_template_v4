@@ -83,13 +83,14 @@ module FirstLogicTemplate
     end
   end
 
-
-  describe 'append and insert' do
+  describe 'Behaviors' do
     def append_ins(o,b)
       i = Instruction.new( ins: o,block_id: b )
       i.save
       i
     end
+
+  describe 'append and insert' do
     context 'append instructions' do
       it 'should have seq_id 1 on first insert' do
         expect(append_ins('First append = 1st arg',2).seq_id).to eq(1)
@@ -136,23 +137,28 @@ module FirstLogicTemplate
   
   describe 'delete' do
     before(:all) do
-      append_ins('First delete = 1st arg',5)
-      append_ins('Second delete = 2nd arg',5)
-      append_ins('Third delete = 3rd arg',5)
-      append_ins('Fourth delete = 4th arg',5)
+      8.times {|i| append_ins("Path (#{i+1}) = arg #{i+1}", 6) }
     end
 
-    context 'delete' do
-      context 'failures' do
-        it 'should trap unmatched block_id/seq_id'
-      end
-      context 'successes' do
-        it 'should delete the specified block_id/seq_id'
-        it 'should re-sequence remaining instructions'
-      end
-      context 'pop' do
-        it 'should delete last instruction from block'
-      end
+    it 'should delete nothing with invalid block_id' do
+      expect( Instruction.delete_all(['block_id = ? and seq_id = ?', 99, 99] ) ).to eq(0)
+    end
+    it 'should trap invalid seq_id' do
+      expect( Instruction.delete_all(['block_id = ? and seq_id = ?', 6, 99] ) ).to eq(0)
+    end
+    it 'should delete the specified instruction from block' do
+      # pp Instruction.where('block_id = ? and seq_id = ?', 6, 4 )
+      expect( Instruction.delete_all(['block_id = ? and seq_id = ?', 6, 4]) ).to eq(1)
+    end
+    it 'should reset seq_ids after delete' do
+      ii = Instruction.where( 'block_id = ? and seq_id > 3', 6 )
+      ii.each_with_index {|i,x| expect(i.seq_id).to eq(x+4) }
+    end
+
+    context 'pop' do
+      it 'should delete last instruction from block'
+      it 'should fail when pop n is greater than # of instructions'
+      it 'should delete n instructions from block'
     end
   end
 
@@ -178,6 +184,8 @@ module FirstLogicTemplate
         it 'should update is_fname if parm changes to file name'
       end
     end
+
+  end
 
   end
 
