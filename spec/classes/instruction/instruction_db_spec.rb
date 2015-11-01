@@ -162,39 +162,6 @@ module FirstLogicTemplate
     end
   end
 
-  describe 'something' do
-    context 'update' do
-      # before(:all) do
-      #   Instruction.delete_all
-      #   3.times {|x|
-      #     Instruction.new("Update test ##{x} = arg #{x}") { |i| i.save }
-      #   }
-      # end
-      context 'failures' do
-        it 'should trap when is_fname is set to nil'
-        # do
-        #   expect{}.to raise_error(ArgumentError)
-        # end
-        it 'should trap when parm is set to nil'
-        it 'should prohibit block_id/seq_id from being updated'
-      end
-      context 'successes' do
-        it 'should update a parm value'
-        it 'should update an arg value'
-        it 'should update is_fname if parm changes to file name'
-      end
-    end
-
   end
-
-  end
-
-  # it 'should convert back slashes to forward slashes in file/path arguments' do
-  #   # i = Instruction.new('Work File Directory (path).... = E:\CLIENT\ABC123\614506\PS01\WORK')
-  #   # expect(i.is_a?(Instruction)).to be_truthy
-  #   # expect(i.parm).to eq('Work File Directory (path)')
-  #   # expect(i.arg).to eq('E:/CLIENT/ABC123/614506/PS01/WORK')
-  #   false
-  # end
 
 end

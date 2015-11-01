@@ -3,8 +3,8 @@ module FirstLogicTemplate
 class Instruction < ActiveRecord::Base
   TEST_FOR_FNAME = /(directory|file name|path)/i
 
-  validates :parm, presence:true
-  validates :block_id, presence:true
+  validates_presence_of :parm
+  validates_presence_of :block_id
 
   before_validation :set_seq_id, on: [:create,:save]
   before_validation :fname_transformations
@@ -38,26 +38,6 @@ class Instruction < ActiveRecord::Base
     end
 
     super(@params.except(:at,:ins))
-  end
-
-  # Split the instruction line into parameter and argument, returning
-  # result as an array [parm,arg].
-  # @param [String] String, in the format 'parm... = arg', to be parsed
-  # @return [Hash] {parm:'',arg:''}
-  def Instruction.parse_h(i)
-    raise ArgumentError,'nil instruction parameter is not permitted' if i.nil?
-
-    case
-      when (ii = /^begin +(?<type>[a-z0-9 .]+) *=*/i.match(i))
-        return {parm:'BEGIN',arg:ii[:type].strip}
-      when (/^END ?$/.match(i))
-        return {parm:'END',arg:nil}
-      else
-        ii = i.split(/\.* *= */,2)
-        return {parm:ii[0].strip,arg:ii[1].strip} if ii.size == 2
-    end
-
-    raise ArgumentError,"String could not be parsed as an instruction (#{i})"
   end
 
   # Split the instruction line into parameter and argument, returning
