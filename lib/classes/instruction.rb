@@ -69,7 +69,7 @@ class Instruction < ActiveRecord::Base
   end
 
   def to_s
-    p = @@arg_loc-self.parm.length		            # calculate number of periods to insert
+    p = Instruction.arg_loc-self.parm.length	    # calculate number of periods to insert
     i = self.parm+'.'*(p < 0 ? 0 : p)+' = '		    # construct parm of instruction
     i += self.arg.to_s if self.arg	              # append argument if argument available
     i				                                      # return rebuilt instruction

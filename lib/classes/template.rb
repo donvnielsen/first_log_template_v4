@@ -27,7 +27,7 @@ class Template
           # commit comments
           i_begin = false
         else
-          block_parms[:instructions] << i
+          block_parms[:@ii] << i
       end
     }
   end
@@ -50,7 +50,7 @@ class Template
         when (m=/^end.+/i.match(i.strip))
           break
         else
-          rtrn[:instructions] << i
+          rtrn[:@ii] << i
       end
     }
 

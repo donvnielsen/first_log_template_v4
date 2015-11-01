@@ -30,42 +30,46 @@ class Block < ActiveRecord::Base
   # instructions are in an array, from BEGIN to END
   def initialize(params)
     @params = params.is_a?(Hash) ? params : {}
-    @instructions = @params[:block]
-    @comments = []
+    @ii = @params[:block]
+    @cc = []
     @name = nil
     parse_instructions
     super(name:@name,seq_id:@seq_id,is_report:false,contains_fname:false)
   end
 
   def instructions
-    ary = []
-    Instruction.where('block_id = ?',self.block_id).order(:seq)_id.each{|i|
-      ary << i.to_s
-    }
-    ary
+    ii = []
+    Instruction.where('block_id = ?',self.id).order(:seq_id).each{|i| ii << i.to_s }
+    ii
+  end
+
+  def comments
+    cc = []
+    Comment.where('block_id = ?',self.id).order(:seq_id).each{|c| cc << c}
+    cc
   end
 
   protected
 
   def parse_instructions
-    raise ArgumentError,'instruction array is empty' if @instructions.nil? || @ii.empty?
+    raise ArgumentError,'instruction array is empty' if @ii.nil? || @ii.empty?
     get_block_comments
     raise ArgumentError,'First block instruction must be BEGIN' unless
-        Instruction.parse(@instructions.first)[0] == 'BEGIN'
+        Instruction.parse(@ii.first)[0] == 'BEGIN'
     parm,@name = Instruction.parse(@ii.shift)
     raise ArgumentError,'Last block instruction must be END' unless
-        Instruction.parse(@instructions.last)[0] == 'END'
+        Instruction.parse(@ii.last)[0] == 'END'
     @ii.pop
   end
 
   def get_block_comments
     while @ii.first.length == 0 || [' ','*','#'].include?(@ii.first[0,1])
-      @comments << @instructions.shift
+      @cc << @ii.shift
     end
   end
 
   def store_instructions
-    @instructions.each {|i| Instruction.create(ins:i,block_id:self.id) }
+    @ii.each {|i| Instruction.create(ins:i,block_id:self.id) }
   end
 
   def store_comments

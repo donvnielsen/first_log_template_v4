@@ -11,6 +11,6 @@ class CreateInstructionsTable < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :@ii
+    drop_table :instructions
   end
 end

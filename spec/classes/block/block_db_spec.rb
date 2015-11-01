@@ -36,14 +36,26 @@ module FirstLogicTemplate
         # end
       end
 
-      context 'Instructions' do
-        it 'should return an array of instructions'
-        it 'should return instructions in the order they were given'
+      it 'should return an array of instructions, in the order they were given' do
+        expect(Block.find(1).instructions).
+          to eq([
+                  "instruction 1................................ = 1",
+                  "instruction 2................................ = 2",
+                  "Output Filename.............................. = /a/b/c.txt",
+                  "Output File Name............................. = /x/y/z.txt",
+                  "Working directory............................ = /1/2/3.txt",
+                  "Path name.................................... = /m/n/o.txt",
+                  "instruction 3................................ = arg 3"
+                ])
       end
 
-      context 'Comments' do
-        it 'should return an array of two comments'
-        it 'should return comments in the order they were given'
+      it 'should return an array of comments, in the order they were given' do
+        expect(Block.find(1).comments).
+          to eq([
+                  '* Block comment 1',
+                  '',
+                  '* Block comment 2',
+                ])
       end
 
       context 'Behaviors' do
