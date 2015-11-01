@@ -1,7 +1,7 @@
 module FirstLogicTemplate
 
 class Instruction < ActiveRecord::Base
-  TEST_FOR_FNAME = /(directory|file name|path)/i
+  TEST_FOR_FNAME = /(directory|file name|path|filename)/i
 
   validates_presence_of :parm
   validates_presence_of :block_id
@@ -83,7 +83,7 @@ class Instruction < ActiveRecord::Base
 
   def fname_transformations
     if TEST_FOR_FNAME.match(self.parm)
-      self.is_fname = true
+      self.is_fname = 1
       self.arg = self.arg.gsub('\\', '/') unless self.arg.nil?
     end
   end

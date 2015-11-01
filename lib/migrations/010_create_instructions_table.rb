@@ -5,12 +5,12 @@ class CreateInstructionsTable < ActiveRecord::Migration
       t.integer :seq_id, null:false
       t.text :parm,null:false
       t.text :arg
-      t.boolean :is_fname, null:false, default:0
+      t.boolean :is_fname, null:false, default:false
     end
 
   end
 
   def self.down
-    drop_table :instructions
+    drop_table :@ii
   end
 end
