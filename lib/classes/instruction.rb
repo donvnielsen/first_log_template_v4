@@ -48,7 +48,7 @@ class Instruction < ActiveRecord::Base
     raise ArgumentError,'nil instruction parameter is not permitted' if i.nil?
 
     case
-      when (ii = /^begin +(?<type>[a-z0-9 .]+) *=*/i.match(i))
+      when (ii = /^begin +(?<type>[a-z0-9 .:,()\/%]+) *=*/i.match(i))
         return ['BEGIN',ii[:type].strip]
       when (/^END ?$/.match(i))
         return ['END',nil]
