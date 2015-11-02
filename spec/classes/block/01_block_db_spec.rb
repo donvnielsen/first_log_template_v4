@@ -31,9 +31,9 @@ module FirstLogicTemplate
         it 'should store instructions' do
           expect(Instruction.where('block_id = 1').size).to eq(7)
         end
-        it 'should store comments'
-        #   expect(Comment.where('block_id = 1').size).to eq(3)
-        # end
+        it 'should store comments' do
+          expect(Comment.where('block_id = 1').size).to eq(3)
+        end
       end
 
       it 'should return an array of instructions, in the order they were given' do

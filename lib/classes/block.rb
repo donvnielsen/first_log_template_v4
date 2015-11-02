@@ -11,22 +11,6 @@ class Block < ActiveRecord::Base
   after_create :store_instructions, on: [:create,:save]
   after_create :store_comments, on: [:create,:save]
 
-  def Block.parse(i)
-    raise ArgumentError,'nil block parameter is not permitted' if i.nil?
-
-    case
-      when (ii = /^begin +(?<type>[a-z0-9 .]+) *=*/i.match(i))
-        return ['BEGIN',ii[:type].strip]
-      when (/^END ?$/.match(i))
-        return ['END',nil]
-      else
-        ii = i.split(/\.* *= */,2)
-        return [ii[0].strip,ii[1].strip] if ii.size == 2
-    end
-
-    raise ArgumentError,"String could not be parsed as an instruction (#{i})"
-  end
-
   # instructions are in an array, from BEGIN to END
   def initialize(params)
     @params = params.is_a?(Hash) ? params : {}
@@ -45,7 +29,7 @@ class Block < ActiveRecord::Base
 
   def comments
     cc = []
-    Comment.where('block_id = ?',self.id).order(:seq_id).each{|c| cc << c}
+    Comment.where('block_id = ?',self.id).order(:seq_id).each{|c| cc << c.text}
     cc
   end
 
@@ -53,19 +37,19 @@ class Block < ActiveRecord::Base
 
   def parse_instructions
     raise ArgumentError,'instruction array is empty' if @ii.nil? || @ii.empty?
-    get_block_comments
-    raise ArgumentError,'First block instruction must be BEGIN' unless
-        Instruction.parse(@ii.first)[0] == 'BEGIN'
-    parm,@name = Instruction.parse(@ii.shift)
-    raise ArgumentError,'Last block instruction must be END' unless
-        Instruction.parse(@ii.last)[0] == 'END'
-    @ii.pop
-  end
 
-  def get_block_comments
     while @ii.first.length == 0 || [' ','*','#'].include?(@ii.first[0,1])
       @cc << @ii.shift
     end
+
+    raise ArgumentError,'First block instruction must be BEGIN' unless
+        Instruction.parse(@ii.first)[0] == 'BEGIN'
+    parm,@name = Instruction.parse(@ii.shift)
+
+    raise ArgumentError,'Last block instruction must be END' unless
+        Instruction.parse(@ii.last)[0] == 'END'
+    @ii.pop
+
   end
 
   def store_instructions
@@ -73,7 +57,7 @@ class Block < ActiveRecord::Base
   end
 
   def store_comments
-    # @comments.each {|c| Comment.create(text:c,block_id:self.id) }
+    @cc.each {|c| Comment.create(text:c,block_id:self.id) }
   end
 
   def set_seq_id
