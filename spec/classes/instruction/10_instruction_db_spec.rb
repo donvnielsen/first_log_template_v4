@@ -43,7 +43,7 @@ esql
         expect(@ii.arg).to eq('E:/CLIENT/ABC123/614506/PS01/WORK')
       end
       it 'should identify instruction has file name' do
-        expect(@ii.is_fname).to eq(true)
+        expect(@ii.is_fname).to eq(false) # it is a path
       end
       it 'should identify the block id' do
         expect(@ii.block_id).to eq(@block.id)
@@ -54,7 +54,7 @@ esql
 
       context 'instruction identifies a file' do
         def file_name_parameters(ins)
-          expect(ins.is_fname).to be_truthy
+          expect(ins.is_fname).to be_falsey # path name
           expect(ins.arg.index('\\')).to be_nil
         end
 
@@ -107,24 +107,16 @@ esql
 
       context 'file name instructions' do
 
-        it 'should set true when parm contains "directory"' do
+        it 'should set false when parm contains "directory"' do
           parm,arg = Instruction.parse('Work File Directory (path).. = E:/CLIENT/ABC123/614506/')
           i = Instruction.create(
               parm:parm,arg:arg,
               block_id:@block.id
           )
-          expect(i.is_fname?).to be_truthy
+          expect(i.is_fname?).to be_falsey
         end
-        it 'should set true when parm contains "directory"' do
+        it 'should set true when parm contains "file name"' do
           parm,arg = Instruction.parse('Input File Name (path & file name).. = E:/614506/PS01/DATA/PWPREP.TXT')
-          i = Instruction.create(
-              parm:parm,arg:arg,
-              block_id:@block.id
-          )
-          expect(i.is_fname?).to be_truthy
-        end
-        it 'should set true when parm contains "directory"' do
-          parm,arg = Instruction.parse('Output File(<path & base file name>.*)... = E:/MAILDAT/MAILDAT@@.*')
           i = Instruction.create(
               parm:parm,arg:arg,
               block_id:@block.id

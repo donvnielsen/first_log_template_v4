@@ -1,7 +1,8 @@
 module FirstLogicTemplate
 
 class Instruction < ActiveRecord::Base
-  TEST_FOR_FNAME = /(directory|file name|path|filename)/i
+  TEST_FOR_FNAME = /(file name|filename)/i
+  TEST_FOR_PATH = /(directory|path)/i
 
   before_validation :fname_transformations
   before_validation :set_seq_id, on: [:create,:save]
@@ -51,7 +52,8 @@ class Instruction < ActiveRecord::Base
   end
 
   def Instruction.has_fname?(o)
-    !TEST_FOR_FNAME.match(o).nil?
+    return false if o.nil?
+    !( TEST_FOR_FNAME.match(o) || TEST_FOR_PATH.match(o) ).nil?
   end
 
   def Instruction.pop_i(block_id,j=1)
@@ -113,10 +115,9 @@ class Instruction < ActiveRecord::Base
 
   protected
 
-  # note to self.  don't mess with self vs @ in this routine.
   def fname_transformations
-    self.is_fname = !TEST_FOR_FNAME.match(self.parm).nil?
-    self.arg = @arg.gsub('\\', '/') unless @arg.nil? || !self.is_fname
+    self.is_fname = !TEST_FOR_FNAME.match(@parm).nil?
+    self.arg = @arg.gsub('\\', '/') if Instruction.has_fname?(@parm)
   end
 
   def set_seq_id
