@@ -38,25 +38,27 @@ module FirstLogicTemplate
       end
 
       it 'should return an array of instructions, in the order they were given' do
-        expect(Block.find(@block.id).instructions).
-          to eq([
-                  "instruction 1................................ = 1",
-                  "instruction 2................................ = 2",
-                  "Output Filename.............................. = //a/b/c.txt",
-                  "Output File Name............................. = //x/y/z.txt",
-                  "Working directory............................ = //1/2/3.txt",
-                  "Path name.................................... = //m/n/o.txt",
-                  "instruction 3................................ = arg 3"
-                ])
+        ii = [
+            "instruction 1................................ = 1",
+            "instruction 2................................ = 2",
+            "Output Filename.............................. = //a/b/c.txt",
+            "Output File Name............................. = //x/y/z.txt",
+            "Working directory............................ = //1/2/3.txt",
+            "Path name.................................... = //m/n/o.txt",
+            "instruction 3................................ = arg 3"
+        ]
+        j = -1
+        @block.instructions.each {|i| expect(i.to_s).to eq(ii[j+=1]) }
       end
 
       it 'should return an array of comments, in the order they were given' do
-        expect(Block.find(@block.id).comments).
-          to eq([
-                  '* Block comment 1',
-                  '',
-                  '* Block comment 2',
-                ])
+        cc = [
+            '* Block comment 1',
+            '',
+            '* Block comment 2',
+        ]
+        j = -1
+        @block.comments.each {|c| expect(c.to_s).to eq(cc[j+=1])}
       end
 
       context 'Behaviors' do

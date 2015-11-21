@@ -60,16 +60,11 @@ class Block < ActiveRecord::Base
   end
 
   def instructions
-    ii = []
-    j = Instruction.where('block_id = ?',self.id).order(:seq_id)
-    j.each {|i| ii << i.to_s }
-    ii
+    Instruction.where('block_id = ?',self.id).order(:seq_id)
   end
 
   def comments
-    cc = []
-    Comment.where('block_id = ?',self.id).order(:seq_id).each{|c| cc << c.text}
-    cc
+    Comment.where('block_id = ?',self.id).order(:seq_id)
   end
 
   def file_names
@@ -98,9 +93,9 @@ class Block < ActiveRecord::Base
 
   def to_a
     bb = []
-    bb << comments
+    self.comments.each{|c| bb << c.to_s }
     bb << sprintf('BEGIN %s',self.name)
-    instructions.each{|i| bb << i.to_s}
+    self.instructions.each{|i| bb << i.to_s}
     bb << 'END'
     bb.flatten
   end
