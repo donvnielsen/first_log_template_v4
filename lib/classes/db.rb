@@ -23,8 +23,6 @@ class Db
   end
 
   def delete_block(seq_id)
-    pp @db.execute('select * from instructions')
-
     @db.execute( "DELETE FROM blocks WHERE seq_id = ?",seq_id)
   end
 
