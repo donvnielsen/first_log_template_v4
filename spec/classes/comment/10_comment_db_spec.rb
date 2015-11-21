@@ -3,6 +3,19 @@ module FirstLogicTemplate
   require 'spec_helper'
 
   describe 'Comment' do
+    def create_block(desc)
+      sql = <<esql
+insert into blocks (name,seq_id,is_report,has_fname)
+  select
+    '#{desc}'
+    ,case when seq_id is null then 1 else max(seq_id)+1 end
+    ,'f'
+    ,'f'
+  from blocks
+esql
+      ActiveRecord::Base.connection.execute(sql)
+      Block.last
+    end
 
     describe 'Behaviors' do
       def append_comment(o,b)
@@ -67,7 +80,7 @@ module FirstLogicTemplate
         it 'should trap invalid seq_id' do
           expect( Comment.delete_all(['block_id = ? and seq_id = ?', 12, 99] ) ).to eq(0)
         end
-        it 'should delete the specified instruction from block' do
+        it 'should delete the specified comment from block' do
           expect( Comment.delete_all(['block_id = ? and seq_id = ?', 12, 4]) ).to eq(1)
         end
         it 'should reset seq_ids after delete' do
@@ -75,11 +88,32 @@ module FirstLogicTemplate
           ii.each_with_index {|i,x| expect(i.seq_id).to eq(x+4) }
         end
 
-        context 'pop' do
-          it 'should delete last instruction from block'
-          it 'should fail when pop n is greater than # of instructions'
-          it 'should delete n instructions from block'
+      end
+
+      context 'pop' do
+        before(:all) do
+          @blk = create_block('pop test')
+          11.times {|i| append_comment("pop (#{i+1}) = arg #{i+1}", @blk.id) }
+          Comment.delete_all(['block_id = ? and seq_id = ?', @blk.id, 4])
         end
+        it 'should default to one if n is not specified' do
+          ary = Comment.pop_c(@blk.id)
+          expect(ary.size).to eq(1)
+          expect(ary[0].seq_id).to eq(10)
+          expect(Comment.where('block_id = ?',@blk.id).count).to eq(9)  #remember, (4) was deleted previously
+        end
+        it 'should pop n instructions when n is specified' do
+          ary = Comment.pop_c(@blk.id, 3)
+          expect(ary.size).to eq(3)
+          expect(Comment.where('block_id = ?',@blk.id).count).to eq(6)
+          Comment.all.where('block_id = ?',@blk.id).each_with_index {|i,x|
+            expect(i.seq_id).to eq(x+1)
+          }
+        end
+        it 'should fail when pop n is greater than # of instructions' do
+          expect{Comment.pop_c(@blk.id, 10)}.to raise_error(ArgumentError)
+        end
+
       end
 
     end
