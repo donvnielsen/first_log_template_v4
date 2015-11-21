@@ -12,10 +12,10 @@ module FirstLogicTemplate
           "BEGIN #{@bname}",
           'instruction 1 = 1',
           'instruction 2 = 2',
-          'Output Filename = \\a\b\c.txt',
-          'Output File Name = \\x\y\z.txt',
-          'Working directory = \\1\2\3.txt',
-          'Path name = \\m\n\o.txt',
+          'Output Filename = \\\\a\b\c.txt',
+          'Output File Name = \\\\x\y\z.txt',
+          'Working directory = \\\\1\2\3.txt',
+          'Path name = \\\\m\n\o.txt',
           'instruction 3 = arg 3',
           'END'
         ]
@@ -42,10 +42,10 @@ module FirstLogicTemplate
           to eq([
                   "instruction 1................................ = 1",
                   "instruction 2................................ = 2",
-                  "Output Filename.............................. = /a/b/c.txt",
-                  "Output File Name............................. = /x/y/z.txt",
-                  "Working directory............................ = /1/2/3.txt",
-                  "Path name.................................... = /m/n/o.txt",
+                  "Output Filename.............................. = //a/b/c.txt",
+                  "Output File Name............................. = //x/y/z.txt",
+                  "Working directory............................ = //1/2/3.txt",
+                  "Path name.................................... = //m/n/o.txt",
                   "instruction 3................................ = arg 3"
                 ])
       end
@@ -76,37 +76,33 @@ module FirstLogicTemplate
           expect(ii.size).to eq(3)
           ['1','2','arg 3'].each_with_index {|arg,i| expect(ii[i].arg).to eq(arg) }
         end
-        it 'should append an instruction'
-        it 'should insert an instruction at a specified location'
-        it 'should delete an instruction'
+
         it 'should be able to clone itself'
         # create new block instance
         # retrieve instructions and send them
         # retrieve comments and send them
       end
 
-      context 'Formatting block' do
-        it 'should format block comments before BEGIN statement'
-        it 'should enclose instructions within BEGIN and END'
-        it 'should put block name after BEGIN'
-        it 'should include formatted instructions'
-      end
-
       context 'File names in instructions' do
         before(:all) do
-          @ary = <<eoo_i
-BEGIN Test File Names
-instruction 1 = 1
-Output File Name = \\x\y\z.txt
-instruction 2 = 2
-Output Filename = \\a\b\c.txt
-Output File Name = \\1\2\3.txt
-instruction 3 = 3
-END
-eoo_i
+          @fnames = @block.file_names
+          puts @fnames
         end
 
-        it 'should return an array containing the 3 file names'
+        it 'should have has_fname true' do
+          expect(@block.has_fname?).to be_truthy
+        end
+        it 'should return an array containing the file names' do
+          expect(@fnames.is_a?(Array)).to be_truthy
+          expect(@fnames.size).to eq(2)
+        end
+
+        it 'should have correct values' do
+          ['//a/b/c.txt','//x/y/z.txt'].each_with_index{|arg,i|
+            expect(@fnames[i]).to eq(arg)
+          }
+        end
+
       end
     end
 

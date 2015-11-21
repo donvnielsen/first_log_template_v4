@@ -72,6 +72,14 @@ class Block < ActiveRecord::Base
     cc
   end
 
+  def file_names
+    ff = []
+    Instruction.
+        where('block_id = ? and is_fname = ?',self.id,true).
+        each{|fname| ff << fname.arg }
+    ff
+  end
+
   def is_report?
     @is_report
   end
@@ -86,6 +94,19 @@ class Block < ActiveRecord::Base
     ary=[]
     self.each {|i| ary << i if o.match(i.parm)}
     ary
+  end
+
+  def to_a
+    bb = []
+    bb << comments
+    bb << sprintf('BEGIN %s',self.name)
+    instructions.each{|i| bb << i.to_s}
+    bb << 'END'
+    bb.flatten
+  end
+
+  def to_s
+    self.to_a.join("\n")
   end
 
   protected
