@@ -1,8 +1,8 @@
 module FirstLogicTemplate
 
 class Block < ActiveRecord::Base
-  has_many :comments,:dependent => :destroy_all
-  has_many :instructions,:dependent => :destroy_all
+  has_many :comments,:dependent => :destroy
+  has_many :instructions,:dependent => :destroy
   include Enumerable
 
   TEST_FOR_REPORT = /^Report:/i

@@ -7,7 +7,6 @@ module FirstLogicTemplate
     context 'Accept a string instruction' do
       before(:all) do
         @block = Block.create!(ins:['BEGIN Accept string instruction','END'])
-pp @block
       end
 
       it 'should accept string instruction ins:parm=arg' do

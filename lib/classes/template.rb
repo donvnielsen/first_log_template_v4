@@ -1,3 +1,6 @@
+# data base is from a parent application
+# template does not create one
+# template requires an existing connection
 class Template
   attr_reader :fname
   attr_reader :db
