@@ -3,13 +3,12 @@ module FirstLogicTemplate
 class Block < ActiveRecord::Base
   has_many :comments,:dependent => :destroy
   has_many :instructions,:dependent => :destroy
+  has_many :block_tags,:dependent => :destroy
   include Enumerable
 
   TEST_FOR_REPORT = /^Report:/i
 
   # before_validation :set_seq_id, on: [:create,:save]
-  # before_validation :set_is_report
-  # before_validation :set_has_fname
 
   validates_presence_of :name
   validates_presence_of :seq_id
@@ -19,11 +18,11 @@ class Block < ActiveRecord::Base
 
   attr_reader :params
 
-  def Block.parse(blk)
-    raise ArgumentError,'instruction block must be an array' unless blk.is_a?(Array)
-    raise ArgumentError,'instruction array is empty' if blk.nil? || blk.empty?
+  def Block.parse(instructions)
+    raise ArgumentError,'instruction block must be an array' unless instructions.is_a?(Array)
+    raise ArgumentError,'instruction array is empty' if instructions.nil? || instructions.empty?
 
-    rc = {ii:blk,cc:[],name:nil}
+    rc = {ii:instructions,cc:[],name:nil}
 
     while rc[:ii].first.length == 0 || [' ','*','#'].include?(rc[:ii].first[0,1])
       rc[:cc] << rc[:ii].shift
@@ -48,17 +47,17 @@ class Block < ActiveRecord::Base
   # instructions are in an array, from BEGIN to END
   def initialize(o)
 
-    raise ArgumentError,'Block must receive an array' unless o.is_a?(Hash)
-    raise ArgumentError,'ins: is required' unless o.has_key?(:ins)
-    raise ArgumentError,'ins: must specify an array of instructions' unless o[:ins].is_a?(Array)
+    raise ArgumentError,'Block must receive a hash' unless o.is_a?(Hash)
+    raise ArgumentError,'template_id: is required' unless o.has_key?(:template_id)
+    raise ArgumentError,'ins: is required' unless
+        o.has_key?(:ins) && o[:ins].is_a?(Array)
 
     @params = Block.parse(o[:ins])
     @name = @params[:name]
+    @template_id = o[:template_id]
     set_seq_id
-    set_is_report
-    set_has_fname
 
-    super(name:@name,seq_id:@seq_id,is_report:@is_report,has_fname:@has_fname)
+    super(template_id:@template_id,name:@name,seq_id:@seq_id)
   end
 
   def instructions

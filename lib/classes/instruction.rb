@@ -4,6 +4,9 @@ class Instruction < ActiveRecord::Base
   TEST_FOR_FNAME = /(file name|filename)/i
   TEST_FOR_PATH = /(directory|path)/i
 
+  belongs_to :block
+  has_many :instruction_tags
+
   before_validation :fname_transformations
   before_validation :set_seq_id, on: [:create,:save]
 

@@ -19,7 +19,11 @@ module FirstLogicTemplate
           'instruction 3 = arg 3',
           'END'
       ]
-      b = Block.create!(ins:@ary)
+      @tt = Template.create(app_id:6,app_name:'Block testing')
+      b = Block.create!(
+          template_id:@tt.id,
+          ins:@ary
+      )
       @block = Block.find(b.id)
     end
 
@@ -65,7 +69,6 @@ module FirstLogicTemplate
         expect(@ary.is_a?(Array)).to be_truthy
       end
       it 'should format block comments before BEGIN statement' do
-        pp @ary
         expect(@ary[0]).to eq('* Block comment 1')
         expect(@ary[2]).to eq('* Block comment 2')
       end

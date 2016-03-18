@@ -5,18 +5,15 @@ module FirstLogicTemplate
   require_relative '../../../lib/classes/db'
 
   describe Instruction do
+
     def create_block(desc)
-      sql = <<esql
-insert into blocks (name,seq_id,is_report,has_fname)
-  select
-    '#{desc}'
-    ,case when seq_id is null then 1 else max(seq_id)+1 end
-    ,'f'
-    ,'f'
-  from blocks
-esql
-      ActiveRecord::Base.connection.execute(sql)
-      Block.last
+      @tt = Template.create(app_id:7,app_name:'Block testing')
+      @bb = Block.maximum(:seq_id)
+      Block.create(
+          template_id:@tt.id,
+          seq: @bb.nil? ? 1 : @bb + 1,
+          ins:["BEGIN #{desc}",'END']
+      )
     end
 
     it 'should raise error when parm value not specified' do

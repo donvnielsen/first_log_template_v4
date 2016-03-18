@@ -1,19 +1,32 @@
 module FirstLogicTemplate
   require 'spec_helper'
 
-  describe 'template' do
-    it 'should receive a connection'
-    it 'should be responsible for migrating db if it does not exist'
-  end
-
   describe 'creating a template' do
-    it 'should have a description'
-    it 'should have an application id and description'
-    it 'should add an entry to template table and return id'
+    it 'should fail without any params' do
+      expect{Template.create()}.to raise_error(ArgumentError)
+    end
+    it 'should fail without an app_name' do
+      expect{Template.create(app_id:1)}.to raise_error(ArgumentError)
+    end
+    it 'should have an application id' do
+      expect{Template.create(app_name:'Test Template')}.to raise_error(ArgumentError)
+    end
+    it 'should add an entry to template table and return id' do
+      id = 1; nme = 'Create template'
+      @tt = Template.create(app_id:id,app_name:nme)
+      expect(@tt.is_a?(Template)).to be_truthy
+      expect(@tt.app_id).to eq(1)
+      expect(@tt.app_name).to eq(nme)
+    end
   end
 
   describe 'append a block' do
-    it 'should tell block to append array of instructions as block'
+    before(:all) do
+      @tt = Template.create(app_id:2,app_name:'Append block')
+    end
+    it 'should tell block to append array of instructions as block' do
+      @bb = @tt.append(blk:['BEGIN','END'])
+    end
     it 'should receive a block id'
   end
 

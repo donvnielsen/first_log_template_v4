@@ -2,6 +2,9 @@ module FirstLogicTemplate
   require 'spec_helper'
 
   describe Block do
+    before(:all) do
+      @tt = Template.create(app_id:4,app_name:'Test block db specs')
+    end
     context 'Valid Block Initialization' do
       before(:all) do
         @bname = 'Report: Test Block Properties Behaviors'
@@ -19,7 +22,7 @@ module FirstLogicTemplate
           'instruction 3 = arg 3',
           'END'
         ]
-        @block = Block.create!(ins:@ary)
+        @block = Block.create!(template_id:@tt.id,ins:@ary)
       end
 
       context 'Properties' do
@@ -31,9 +34,6 @@ module FirstLogicTemplate
         end
         it 'should store comments' do
           expect(Comment.where("block_id = #{@block.seq_id}").size).to eq(3)
-        end
-        it 'should set is_report flag' do
-          expect(@block.is_report?).to be_truthy
         end
       end
 
@@ -91,9 +91,6 @@ module FirstLogicTemplate
           puts @fnames
         end
 
-        it 'should have has_fname true' do
-          expect(@block.has_fname?).to be_truthy
-        end
         it 'should return an array containing the file names' do
           expect(@fnames.is_a?(Array)).to be_truthy
           expect(@fnames.size).to eq(2)
