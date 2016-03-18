@@ -1,6 +1,11 @@
 module FirstLogicTemplate
   require 'spec_helper'
 
+  def append_blk(o,b)
+    parm,arg = B.parse(o)
+    @ii = Block.create( parm:parm,arg:arg,block_id:b )
+  end
+
   describe 'creating a template' do
     it 'should fail without any params' do
       expect{Template.create()}.to raise_error(ArgumentError)
@@ -25,7 +30,7 @@ module FirstLogicTemplate
       @tt = Template.create(app_id:2,app_name:'Append block')
     end
     it 'should tell block to append array of instructions as block' do
-      @bb = @tt.append(blk:['BEGIN','END'])
+      @bb = Block(blk:['BEGIN','END'])
     end
     it 'should receive a block id'
   end

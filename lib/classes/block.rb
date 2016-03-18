@@ -45,16 +45,22 @@ class Block < ActiveRecord::Base
   end
 
   # instructions are in an array, from BEGIN to END
-  def initialize(o)
+  # @param [Hash] params parameter options
+  # @option params [Array] :block instruction block
+  # @option params [Integer] :template_id required template id
+  # @option params [Integer] :seq_id when inserting a new block
+  def initialize(params)
+    @params  = params
+    raise ArgumentError,'parameter hash is required' if @params.nil?
+    raise ArgumentError,'template_id is required' unless
+        @params.has_key?(:template_id) && !@params[:template_id].nil?
+    raise ArgumentError,'template_id not found' if Template.find(@params[:template_id]).nil?
+    raise ArgumentError,'block: is required' unless
+        @params.has_key?(:block) && @params[:block].is_a?(Array)
 
-    raise ArgumentError,'Block must receive a hash' unless o.is_a?(Hash)
-    raise ArgumentError,'template_id: is required' unless o.has_key?(:template_id)
-    raise ArgumentError,'ins: is required' unless
-        o.has_key?(:ins) && o[:ins].is_a?(Array)
-
-    @params = Block.parse(o[:ins])
-    @name = @params[:name]
-    @template_id = o[:template_id]
+    @block = Block.parse(@params[:block])
+    @name = @block[:name]
+    @template_id = @params[:template_id]
     set_seq_id
 
     super(template_id:@template_id,name:@name,seq_id:@seq_id)
@@ -141,11 +147,11 @@ class Block < ActiveRecord::Base
   # === These process after saving. The block id is required prior
   #     to writing instructions and comments
   def store_instructions
-    @params[:ii].each {|i| Instruction.create!(ins:i,block_id:self.id) }
+    @block[:ii].each {|i| Instruction.create!(ins:i,block_id:self.id) }
   end
 
   def store_comments
-    @params[:cc].each {|c| Comment.create(text:c,block_id:self.id) }
+    @block[:cc].each {|c| Comment.create(text:c,block_id:self.id) }
   end
 end
 

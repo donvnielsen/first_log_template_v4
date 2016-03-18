@@ -9,7 +9,7 @@ module FirstLogicTemplate
       Block.create(
           template_id:@tt.id,
           seq: @bb.nil? ? 1 : @bb + 1,
-          ins:["BEGIN #{desc}",'END']
+          block:["BEGIN #{desc}",'END']
       )
     end
 

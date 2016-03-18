@@ -22,7 +22,7 @@ module FirstLogicTemplate
           'instruction 3 = arg 3',
           'END'
         ]
-        @block = Block.create!(template_id:@tt.id,ins:@ary)
+        @block = Block.create!(template_id:@tt.id,block:@ary)
       end
 
       context 'Properties' do

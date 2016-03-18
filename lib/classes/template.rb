@@ -18,6 +18,10 @@ class Template < ActiveRecord::Base
 
     super(app_id:@app_id,app_name:@app_name)
   end
+
+  def append_block(blk)
+
+  end
 end
 
 end

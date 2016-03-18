@@ -22,7 +22,7 @@ module FirstLogicTemplate
       @tt = Template.create(app_id:6,app_name:'Block testing')
       b = Block.create!(
           template_id:@tt.id,
-          ins:@ary
+          block:@ary
       )
       @block = Block.find(b.id)
     end
