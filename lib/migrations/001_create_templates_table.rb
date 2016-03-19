@@ -5,6 +5,7 @@ class CreateTemplatesTable < ActiveRecord::Migration
       t.integer :app_id#, null:false
     end
 
+    add_foreign_key :blocks,:templates, on_delete: :cascade
   end
 
   def self.down

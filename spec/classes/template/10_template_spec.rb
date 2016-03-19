@@ -55,9 +55,33 @@ module FirstLogicTemplate
 
   end
 
-  describe 'delete a block' do
-    it 'should delete block from template'
-    it 'should resequence all blocks'
+  describe 'deleting blocks' do
+    before(:all) do
+      Template.create(app_id:2,app_name:'Delete block test')
+      10.times{|i|
+        Block.create( template_id:Template.last.id,block:["BEGIN Insert block test #{i+1}",'END'] )
+      }
+    end
+    context 'delete block #1 (first)' do
+      it 'should delete the block'
+      it 'should resequence remaining blocks'
+      # check min & max seq_id
+      it 'should have the proper number of blocks remaining'
+      # proper qty 9, last should be 10
+    end
+    context 'delete block #5 (middle)' do
+      it 'should delete the block'
+      it 'should resequence remaining blocks'
+      it 'should have the proper number of blocks remaining'
+      # proper qty 8, last should be 10
+    end
+    context 'delete block #8 (last)' do
+      it 'should delete the block'
+      it 'should resequence remaining blocks'
+      it 'should have the proper number of blocks remaining'
+      # proper qty 7, last should be 9
+    end
+    it 'should fail trying delete block #8 a second time'
   end
 
   describe 'block iterator' do
