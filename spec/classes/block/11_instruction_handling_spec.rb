@@ -5,18 +5,18 @@ module FirstLogicTemplate
 
   describe 'Block instruction behaviors' do
     def create_block(desc)
-      @tt = Template.create(app_id:5,app_name:'Block testing')
-      @bb = Block.maximum(:seq_id)
-      Block.create(
-          template_id:@tt.id,
-          seq: @bb.nil? ? 1 : @bb + 1,
+      Template.create(app_id:5,app_name:'Block testing')
+      max = Block.maximum(:seq_id)
+      Block.create!(
+          template_id:Template.last.id,
+          seq_id: max.nil? ? 1 : max + 1,
           block:["BEGIN #{desc}",'END']
       )
     end
 
     def append_ins(o,b)
       parm,arg = Instruction.parse(o)
-      @ii = Instruction.create( parm:parm,arg:arg,block_id:b )
+      Instruction.create!( parm:parm,arg:arg,block_id:b )
     end
 
     describe 'append and insert' do
@@ -44,7 +44,7 @@ module FirstLogicTemplate
         end
 
         it 'should insert an instruction into block' do
-          expect( Instruction.create(parm:'First insert',arg:'4th arg',block_id:@blk.id,seq_id:2) ).to be_truthy
+          expect( Instruction.create!(parm:'First insert',arg:'4th arg',block_id:@blk.id,seq_id:2) ).to be_truthy
         end
         it 'should have the correct number of instructions in block' do
           expect(Instruction.where( 'block_id = ?',@blk.id ).count).to eq(4)
@@ -61,12 +61,12 @@ module FirstLogicTemplate
         end
         it 'should raise error if seq_id is greater than max seq_id' do
           expect{
-            Instruction.create( parm:'invalid insert',arg:'99 arg',block_id: @blk.id, seq_id: 99 )
+            Instruction.create!( parm:'invalid insert',arg:'99 arg',block_id: @blk.id, seq_id: 99 )
           }.to raise_error(ArgumentError)
         end
         it 'should raise error if :at is less than one' do
           expect{
-            Instruction.create( parm:'invalid insert',arg:'-1 arg',block_id: @blk.id, seq_id: -1 )
+            Instruction.create!( parm:'invalid insert',arg:'-1 arg',block_id: @blk.id, seq_id: -1 )
           }.to raise_error(ArgumentError)
         end
       end

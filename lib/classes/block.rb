@@ -167,7 +167,6 @@ class Block < ActiveRecord::Base
 
   # ensures template exists before saving block
   def check_template_exists
-    pp self.template_id,self.template_id.nil?
     Template.find(self.template_id) unless self.template_id.nil?
   end
 

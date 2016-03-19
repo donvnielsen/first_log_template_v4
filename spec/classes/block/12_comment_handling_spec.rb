@@ -4,11 +4,11 @@ module FirstLogicTemplate
 
   describe 'Comment' do
     def create_block(desc)
-      @tt = Template.create(app_id:5,app_name:'Block testing')
-      @bb = Block.maximum(:seq_id)
+      Template.create!(app_id:5,app_name:'Block testing')
+      max = Block.maximum(:seq_id)
       Block.create(
-          template_id:@tt.id,
-          seq: @bb.nil? ? 1 : @bb + 1,
+          template_id:Template.last.id,
+          seq_id: max.nil? ? 1 : max + 1,
           block:["BEGIN #{desc}",'END']
       )
     end
@@ -41,7 +41,7 @@ module FirstLogicTemplate
           end
 
           it 'should insert an comment into block' do
-            expect(Comment.create( text:'First insert',block_id:11,at:2 )).to be_truthy
+            expect(Comment.create!( text:'First insert',block_id:11,at:2 )).to be_truthy
           end
           it 'should have four comment in block' do
             expect(Comment.where( 'block_id = ?',11 ).count).to eq(4)
@@ -57,10 +57,10 @@ module FirstLogicTemplate
             expect(i.seq_id).to eq(4)
           end
           it 'should raise error if :at is greater than max seq_id' do
-            Comment.create( text: 'invalid insert 99',block_id: 11, seq_id: 99 )
+            Comment.create!( text: 'invalid insert 99',block_id: 11, seq_id: 99 )
           end
           it 'should raise error if :at is less than one' do
-            Comment.create( text: 'invalid insert -1',block_id: 11, seq_id: -1 )
+            Comment.create!( text: 'invalid insert -1',block_id: 11, seq_id: -1 )
           end
         end
       end

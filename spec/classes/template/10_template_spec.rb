@@ -24,13 +24,8 @@ module FirstLogicTemplate
       Template.create!(app_id:2,app_name:'Append block test')
     end
     it 'should append a block to the template' do
-      @bb = Block.create( template_id:Template.last.id,block:['BEGIN Append block test','END'] )
-      @bb.save
-      expect(@bb.is_a?(Block)).to be_truthy
-    end
-    it 'should receive a block id' do
-      pp Block.last
-      expect(Block.last.id.is_a?(Fixnum)).to be_truthy
+      Block.create( template_id:Template.last.id,block:['BEGIN Append block test','END'] )
+      expect(Block.last.id).to eq(1)
     end
   end
 
@@ -38,18 +33,23 @@ module FirstLogicTemplate
     before(:all) do
       Template.create(app_id:2,app_name:'Insert block test')
       5.times{|i|
-        Block.create( template_id:Template.last.id,block:["BEGIN Insert block test #{i}",'END'] )
+        Block.create( template_id:Template.last.id,block:["BEGIN Insert block test #{i+1}",'END'] )
       }
       Block.create( template_id:Template.last.id,block:['BEGIN Insert block test X','END'],seq_id:3 )
-      pp Block.all
     end
     it 'should insert a block at specified index' do
       expect(Block.last.name).to eq('Insert block test X')
       expect(Block.last.seq_id).to eq(3)
     end
     it 'should update seq ids of following blocks' do
-      expect(Block.find(3).seq_id).to eq(4)
-      expect(Block.find(4).seq_id).to eq(5)
+      [
+          [3,'Insert block test X'],
+          [4,'Insert block test 3'],
+          [5,'Insert block test 4']
+      ].each {|seq_id,name|
+        b = Block.where('template_id = ? and seq_id = ?',Template.last.id,seq_id).first
+        expect(b.name).to eq(name)
+      }
     end
 
   end
