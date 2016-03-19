@@ -3,37 +3,46 @@ module FirstLogicTemplate
 
   describe Block do
     before(:all) do
-      @tt = Template.create(app_id:4,app_name:'Test block db specs')
+      Template.create(app_id:4,app_name:'Test block db specs')
     end
+
+    it 'should fail with invalid template id' do
+      expect{
+        Block.create!(template_id:99,name:'BEGIN Tests invalid template id')
+      }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
     context 'Valid Block Initialization' do
       before(:all) do
         @bname = 'Report: Test Block Properties Behaviors'
-        @ary = [
-          '* Block comment 1',
-          '',
-          '* Block comment 2',
-          "BEGIN #{@bname}",
-          'instruction 1 = 1',
-          'instruction 2 = 2',
-          'Output Filename = \\\\a\b\c.txt',
-          'Output File Name = \\\\x\y\z.txt',
-          'Working directory = \\\\1\2\3.txt',
-          'Path name = \\\\m\n\o.txt',
-          'instruction 3 = arg 3',
-          'END'
-        ]
-        @block = Block.create!(template_id:@tt.id,block:@ary)
+        @block = Block.parse(
+          [
+            '* Block comment 1',
+            '',
+            '* Block comment 2',
+            "BEGIN #{@bname}",
+            'instruction 1 = 1',
+            'instruction 2 = 2',
+            'Output Filename = \\\\a\b\c.txt',
+            'Output File Name = \\\\x\y\z.txt',
+            'Working directory = \\\\1\2\3.txt',
+            'Path name = \\\\m\n\o.txt',
+            'instruction 3 = arg 3',
+            'END'
+          ]
+        )
+        Block.create!(template_id:Template.last.id,name:@block[:name])
       end
 
       context 'Properties' do
         it 'should return the block name' do
-          expect(@block.name).to eq(@bname)
+          expect(Block.last.name).to eq(@block[:name])
         end
         it 'should store instructions' do
-          expect(Instruction.where("block_id = #{@block.seq_id}").size).to eq(7)
+          expect(Instruction.where("block_id = #{Block.last.seq_id}").size).to eq(7)
         end
         it 'should store comments' do
-          expect(Comment.where("block_id = #{@block.seq_id}").size).to eq(3)
+          expect(Comment.where("block_id = #{Block.last.seq_id}").size).to eq(3)
         end
       end
 
@@ -48,7 +57,7 @@ module FirstLogicTemplate
             "instruction 3................................ = arg 3"
         ]
         j = -1
-        @block.instructions.each {|i| expect(i.to_s).to eq(ii[j+=1]) }
+        Block.last.instructions.each {|i| expect(i.to_s).to eq(ii[j+=1]) }
       end
 
       it 'should return an array of comments, in the order they were given' do
@@ -58,23 +67,23 @@ module FirstLogicTemplate
             '* Block comment 2',
         ]
         j = -1
-        @block.comments.each {|c| expect(c.to_s).to eq(cc[j+=1])}
+        Block.last.comments.each {|c| expect(c.to_s).to eq(cc[j+=1])}
       end
 
       context 'Behaviors' do
         it 'should iterate over instructions' do
           j = 0
-          @block.each_with_index {|i,idx|
+          Block.last.each_with_index {|i,idx|
             ii = Instruction.parse(@ary[idx])
             expect(i.parm).to eq(ii[0])
             expect(i.arg).to eq(ii[1].gsub('\\', '/'))
             j+=1
           }
-          expect(j).to eq(@block.instructions.size)
+          expect(j).to eq(Block.last.instructions.size)
         end
 
         it 'should find an instruction' do
-          ii = @block.find_all_i(/^instruction/i)
+          ii = Block.last.find_all_i(/^instruction/i)
           expect(ii.size).to eq(3)
           ['1','2','arg 3'].each_with_index {|arg,i| expect(ii[i].arg).to eq(arg) }
         end
@@ -87,7 +96,7 @@ module FirstLogicTemplate
 
       context 'File names in instructions' do
         before(:all) do
-          @fnames = @block.file_names
+          @fnames = Block.last.file_names
           puts @fnames
         end
 
