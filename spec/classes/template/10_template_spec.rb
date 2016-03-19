@@ -25,7 +25,8 @@ module FirstLogicTemplate
     end
     it 'should append a block to the template' do
       Block.create( template_id:Template.last.id,block:['BEGIN Append block test','END'] )
-      expect(Block.last.id).to eq(1)
+      b = Block.find_by template_id:Template.last.id
+      expect(b.seq_id).to eq(1)
     end
   end
 
