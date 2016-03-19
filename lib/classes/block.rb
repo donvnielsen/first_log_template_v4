@@ -5,7 +5,7 @@ class Block < ActiveRecord::Base
 
   has_many :comments,:dependent => :destroy
   has_many :instructions,:dependent => :destroy
-  has_many :block_tags,:dependent => :destroy
+  # has_many :block_tags,:dependent => :destroy
 
   include Enumerable
 
@@ -20,6 +20,8 @@ class Block < ActiveRecord::Base
   # after saving block to table, do these actions
   after_save :store_instructions, on: :create
   after_save :store_comments, on: :create
+
+  after_destroy :update_seq_ids
 
   # attr_reader :params
   attr_accessor :block
@@ -128,6 +130,12 @@ class Block < ActiveRecord::Base
 
   def store_comments
     @block[:cc].each {|c| Comment.create!(text:c,block_id:self.id) } unless @block.nil?
+  end
+
+  def update_seq_ids(i=0)
+    Block.where('template_id = ?',self.template_id).order(seq_id: :asc).each {|b|
+      b.update(seq_id: (i+=1))
+    }
   end
 
   protected

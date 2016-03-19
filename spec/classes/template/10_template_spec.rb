@@ -55,33 +55,80 @@ module FirstLogicTemplate
 
   end
 
-  describe 'deleting blocks' do
+  describe 'deleting template deletes blocks' do
+    before(:all) do
+      Template.create(app_id:2,app_name:'Delete blocks tmp')
+      10.times{|i|
+        Block.create( template_id:Template.last.id,block:["BEGIN Delete block test tmp #{i+1}",'END'] )
+      }
+    end
+    it 'should have template and blocks' do
+      expect(Template.last.id.is_a?(Fixnum)).to be_truthy
+      expect(Block.where('template_id = ?',Template.last.id).size).to eq(10)
+    end
+    it 'delete' do
+      o = Template.last.id
+      Template.delete(o)
+      expect{Template.find(o)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect(Block.where('template_id = ?',o).size).to eq(0)
+    end
+  end
+
+  describe 'Deleting a block from many blocks' do
     before(:all) do
       Template.create(app_id:2,app_name:'Delete block test')
       10.times{|i|
-        Block.create( template_id:Template.last.id,block:["BEGIN Insert block test #{i+1}",'END'] )
+        Block.create( template_id:Template.last.id,block:["BEGIN Delete block test #{i+1}",'END'] )
       }
     end
     context 'delete block #1 (first)' do
-      it 'should delete the block'
-      it 'should resequence remaining blocks'
-      # check min & max seq_id
-      it 'should have the proper number of blocks remaining'
-      # proper qty 9, last should be 10
+      before(:all) do
+        Block.where('template_id = ? and seq_id = 1',Template.last.id).first.destroy
+      end
+      it 'should not find the block' do
+        b = Block.where('template_id = ? and name = ?',Template.last.id,'Delete block test 1')
+        expect(b.size).to eq(0)
+      end
+      it 'should resequence remaining blocks' do
+        expect(Block.minimum(:seq_id)).to eq(1)
+        expect(Block.maximum(:seq_id)).to eq(9)
+        bb = Block.where('template_id = ?',Template.last.id)
+        expect(bb.size).to eq(9)
+        expect(bb.last.name).to eq('Delete block test 10')
+      end
     end
     context 'delete block #5 (middle)' do
-      it 'should delete the block'
-      it 'should resequence remaining blocks'
-      it 'should have the proper number of blocks remaining'
-      # proper qty 8, last should be 10
+      before(:all) do
+        Block.where('template_id = ? and seq_id = 5',Template.last.id).first.destroy
+      end
+      it 'should not find the block' do
+        b = Block.where('template_id = ? and name = ?',Template.last.id,'Delete block test 6')
+        expect(b.size).to eq(0)
+      end
+      it 'should resequence remaining blocks' do
+        expect(Block.minimum(:seq_id)).to eq(1)
+        expect(Block.maximum(:seq_id)).to eq(8)
+        bb = Block.where('template_id = ?',Template.last.id)
+        expect(bb.size).to eq(8)
+        expect(bb.last.name).to eq('Delete block test 10')
+      end
     end
     context 'delete block #8 (last)' do
-      it 'should delete the block'
-      it 'should resequence remaining blocks'
-      it 'should have the proper number of blocks remaining'
-      # proper qty 7, last should be 9
+      before(:all) do
+        Block.where('template_id = ? and seq_id = 8',Template.last.id).first.destroy
+      end
+      it 'should not find the block' do
+        b = Block.where('template_id = ? and name = ?',Template.last.id,'Delete block test 10')
+        expect(b.size).to eq(0)
+      end
+      it 'should resequence remaining blocks' do
+        expect(Block.minimum(:seq_id)).to eq(1)
+        expect(Block.maximum(:seq_id)).to eq(7)
+        bb = Block.where('template_id = ?',Template.last.id)
+        expect(bb.size).to eq(7)
+        expect(bb.last.name).to eq('Delete block test 9')
+      end
     end
-    it 'should fail trying delete block #8 a second time'
   end
 
   describe 'block iterator' do

@@ -5,7 +5,7 @@ class CreateInstructionsTable < ActiveRecord::Migration
       t.integer :seq_id, null:false
       t.text :parm,null:false
       t.text :arg
-      t.boolean :is_fname, null:false, default:false
+      # t.boolean :is_fname, null:false, default:false
     end
 
   end
