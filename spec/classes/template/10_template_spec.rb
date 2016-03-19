@@ -132,7 +132,18 @@ module FirstLogicTemplate
   end
 
   describe 'block iterator' do
-    it 'should have an each to iterate blocks'
+    before(:all) do
+      Template.create(app_id:2,app_name:'Block iterator test')
+      5.times{|i|
+        Block.create( template_id:Template.last.id,block:["BEGIN Block iterator test #{i+1}",'END'] )
+      }
+    end
+    it 'should have an each to iterate blocks' do
+      Template.last.each_with_index{|b,i|
+        expect(b.is_a?(Block)).to be_truthy
+        expect(b.name).to eq("Block iterator test #{i+1}")
+      }
+    end
   end
 
   describe 'searching blocks' do
