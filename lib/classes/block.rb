@@ -2,6 +2,7 @@ module FirstLogicTemplate
 
 class Block < ActiveRecord::Base
   belongs_to :template
+
   has_many :comments,:dependent => :destroy
   has_many :instructions,:dependent => :destroy
   has_many :block_tags,:dependent => :destroy
@@ -10,20 +11,23 @@ class Block < ActiveRecord::Base
 
   TEST_FOR_REPORT = /^Report:/i
 
+  after_initialize :after_init
   before_validation :set_seq_id, on: [:create,:save]
 
   validates :template_id, :name, :seq_id, presence:  true
-  validates_associated :template
+  validate :check_template_exists, on: :create
 
-  # after_save :store_instructions, on: :create
-  # after_save :store_comments, on: :create
+  # after saving block to table, do these actions
+  after_save :store_instructions, on: :create
+  after_save :store_comments, on: :create
 
   # attr_reader :params
-  # attr_accessor :template_id,:seq_id
+  attr_accessor :block
 
-  def Block.parse(instructions)
-    raise ArgumentError,'instruction block must be an array' unless instructions.is_a?(Array)
-    raise ArgumentError,'instruction array is empty' if instructions.nil? || instructions.empty?
+  def Block.parse(o)
+    raise ArgumentError,'instruction block must be an array' unless o.is_a?(Array)
+    raise ArgumentError,'instruction array is empty' if o.nil? || o.empty?
+    instructions = o.clone  # clone prevents manipulation of argument
 
     rc = {ii:instructions,cc:[],name:nil}
 
@@ -42,6 +46,11 @@ class Block < ActiveRecord::Base
     rc
   end
 
+  # save parameter from caller, but clone it before parsing
+  # parsing shifts and pops values from the argument
+  def block=(o)
+    @block = Block.parse(o)
+  end
 
   # instruction iterator
   def each(&block)
@@ -53,20 +62,23 @@ class Block < ActiveRecord::Base
   # @option options [Array] :block instruction block
   # @option options [Integer] :template_id required template id
   # @option options [Integer] :seq_id when inserting a new block
-  def initialize(params,options={})
-    @options = options
-    super(params)
-  end
-
-  # def after_initialize
-  #   @block = Block.parse(@options[:block])
-  #   self.name = @block[:name]
+  # def initialize(params)
+  #   @params = params
+  #   super(params)
   # end
 
+  # post initialize processing
+  def after_init
+    self.name = @block[:name] unless self.block.nil?
+    # Template.find(self.template_id) if self.valid?
+  end
+
+  # block instructions in seq_id order
   def instructions
     Instruction.where('block_id = ?',self.id).order(:seq_id)
   end
 
+  # block comments in seq_id order
   def comments
     Comment.where('block_id = ?',self.id).order(:seq_id)
   end
@@ -110,32 +122,17 @@ class Block < ActiveRecord::Base
 
   # === These process after saving. The block id is required prior
   #     to writing instructions and comments
-  def store_instructions(ii)
-    ii.each {|i| Instruction.create!(ins:i,block_id:self.id) }
+  def store_instructions
+    @block[:ii].each {|i| Instruction.create!(ins:i,block_id:self.id) } unless @block.nil?
   end
 
-  def store_comments(cc)
-    cc.each {|c| Comment.create!(text:c,block_id:self.id) }
+  def store_comments
+    @block[:cc].each {|c| Comment.create!(text:c,block_id:self.id) } unless @block.nil?
   end
 
   protected
 
   # ==== these process prior to validations
-  def set_seq_id
-    max = Block.maximum(:seq_id) || 0
-    @seq_id =
-        case
-          when @seq_id.nil? || max == 0 #append
-            max + 1
-          when @seq_id < 1 || @seq_id > max
-            raise ArgumentError, "Specified :at(#{@seq_id}) is outside the range 1..#{max}"
-          else
-            bb = Block.where( 'seq_id >= ?',@seq_id ).order(:seq_id)
-            bb.each {|b| b.update(seq_id:b.seq_id+1) }
-            @seq_id
-        end
-  end
-
 
   # identifies if block is report block
   def set_is_report
@@ -166,6 +163,12 @@ class Block < ActiveRecord::Base
                       self.seq_id
                   end
 
+  end
+
+  # ensures template exists before saving block
+  def check_template_exists
+    pp self.template_id,self.template_id.nil?
+    Template.find(self.template_id) unless self.template_id.nil?
   end
 
 end

@@ -1,48 +1,71 @@
 module FirstLogicTemplate
   require 'spec_helper'
 
+  describe 'validation without array of instructions' do
+    before(:all) do
+      Template.create(app_id:3,app_name:'Block testing')
+      Block.create(template_id:Template.last.id,name:'instruction array omitted')
+    end
+    it 'shouldnt have name errors' do
+      expect(Block.last.errors[:name].any?).to be_falsey
+    end
+    it 'shouldnt have seq_id errors' do
+      expect(Block.last.errors[:seq_id].any?).to be_falsey
+    end
+    it 'should have a completely valid block' do
+      expect(Block.last.valid?).to be_truthy
+    end
+  end
+
   describe Block do
     before(:all) do
       Template.create(app_id:4,app_name:'Test block db specs')
     end
 
-    it 'should fail with invalid template id' do
-      expect{
-        Block.create!(template_id:99,name:'BEGIN Tests invalid template id')
-      }.to raise_error(ActiveRecord::RecordNotFound)
+    context 'template_id existence validated' do
+      it 'should fail when template_id is omitted' do
+        expect{ Block.create!(name:'template id omitted') }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+      it 'should fail with invalid template id' do
+        expect{
+          Block.create!(template_id:99,name:'BEGIN Tests invalid template id')
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
 
-    context 'Valid Block Initialization' do
+    context 'Valid Block Initializations' do
       before(:all) do
         @bname = 'Report: Test Block Properties Behaviors'
-        @block = Block.parse(
-          [
-            '* Block comment 1',
-            '',
-            '* Block comment 2',
-            "BEGIN #{@bname}",
+        @ary = [
             'instruction 1 = 1',
             'instruction 2 = 2',
             'Output Filename = \\\\a\b\c.txt',
             'Output File Name = \\\\x\y\z.txt',
             'Working directory = \\\\1\2\3.txt',
             'Path name = \\\\m\n\o.txt',
-            'instruction 3 = arg 3',
+            'instruction 3 = arg 3'
+        ]
+        @block = [
+            '* Block comment 1',
+            '',
+            '* Block comment 2',
+            "BEGIN #{@bname}",
+            @ary,
             'END'
-          ]
-        )
-        Block.create!(template_id:Template.last.id,name:@block[:name])
+          ].flatten
+        Block.create!(block:@block,template_id:Template.last.id)
       end
 
       context 'Properties' do
         it 'should return the block name' do
-          expect(Block.last.name).to eq(@block[:name])
+          expect(Block.last.name).to eq(@bname)
         end
         it 'should store instructions' do
-          expect(Instruction.where("block_id = #{Block.last.seq_id}").size).to eq(7)
+          expect(Block.last.instructions.size).to eq(7)
+          expect(Instruction.where("block_id = #{Block.last.id}").size).to eq(7)
         end
         it 'should store comments' do
-          expect(Comment.where("block_id = #{Block.last.seq_id}").size).to eq(3)
+          expect(Comment.where("block_id = #{Block.last.id}").size).to eq(3)
         end
       end
 
