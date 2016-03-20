@@ -72,7 +72,7 @@ module FirstLogicTemplate
       end
     end
 
-    describe 'delete' do
+    describe 'Deletereturn an array of blocks instructions' do
       before(:all) do
         @blk = create_block('delete test')
         11.times {|i| append_ins("Path (#{i+1}) = arg #{i+1}", @blk.id) }

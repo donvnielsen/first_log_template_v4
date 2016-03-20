@@ -55,25 +55,6 @@ module FirstLogicTemplate
 
   end
 
-  describe 'deleting template deletes blocks' do
-    before(:all) do
-      Template.create(app_id:2,app_name:'Delete blocks tmp')
-      10.times{|i|
-        Block.create( template_id:Template.last.id,block:["BEGIN Delete block test tmp #{i+1}",'END'] )
-      }
-    end
-    it 'should have template and blocks' do
-      expect(Template.last.id.is_a?(Fixnum)).to be_truthy
-      expect(Block.where('template_id = ?',Template.last.id).size).to eq(10)
-    end
-    it 'delete' do
-      o = Template.last.id
-      Template.delete(o)
-      expect{Template.find(o)}.to raise_error(ActiveRecord::RecordNotFound)
-      expect(Block.where('template_id = ?',o).size).to eq(0)
-    end
-  end
-
   describe 'Deleting a block from many blocks' do
     before(:all) do
       Template.create(app_id:2,app_name:'Delete block test')
@@ -146,9 +127,9 @@ module FirstLogicTemplate
     end
   end
 
-  describe 'searching blocks' do
-    it 'should search by name'
-    it 'should return an array of blocks'
+  describe 'searching blocks using tag(s)' do
+    it 'should search with one tag'
+    it 'should search with multiple tags'
   end
 
   describe 'importing template' do
@@ -162,9 +143,18 @@ module FirstLogicTemplate
     it 'should write a new text file template'
   end
 
-  describe 'deleting template' do
-    it 'should delete template entry'
-    it 'all related blocks should be removed'
+  describe 'Delete template' do
+    before(:all) do
+      @t = Template.create(app_id:2,app_name:'Template delete test')
+      5.times{|i|
+        Block.create( template_id:Template.last.id,block:["BEGIN Template delete test #{i+1}",'END'] )
+      }
+    end
+    it 'should delete all related data' do
+      Template.last.delete
+      expect{Template.find(@t.id)}.to raise_error(ActiveRecord::RecordNotFound)
+      expect(Block.where('template_id = ?',@t.id).size).to eq(0)
+    end
   end
 
 end
