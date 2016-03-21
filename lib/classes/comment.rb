@@ -64,20 +64,17 @@ module FirstLogicTemplate
 
   def set_seq_id(o)
     max = Comment.where('block_id = ?',o[:block_id]).maximum(:seq_id) || 0
-    o[:seq_id] = case
-                    when o[:sql_id].nil?
-                      max + 1
-                    when o[:seq_id] < 1 || o[:seq_id] > max
-                      raise ArgumentError, "Specified location(#{o[:seq_id]}) is outside the range 1..#{max}"
-                    else
-                      bb = Comment.
-                          where( 'block_id = ? and seq_id >= ?',o[:block_id],o[:seq_id] ).
-                          order(:block_id,:seq_id)
-                      bb.each {|b|
-                        b.update(seq_id:b.seq_id+1)
-                      }
-                      o[:seq_id]
-                 end
+    case
+      when o[:seq_id].nil?
+        o[:seq_id] = max + 1
+      when o[:seq_id] < 1 || o[:seq_id] > max
+        raise ArgumentError, "Specified location(#{o[:seq_id]}) is outside the range 1..#{max}"
+      else
+        bb = Comment.
+            where( 'block_id = ? and seq_id >= ?',o[:block_id],o[:seq_id] ).
+            order(:seq_id)
+        bb.each {|b| b.update(seq_id:b.seq_id+1) }
+    end
     o
   end
 
