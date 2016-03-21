@@ -1,8 +1,8 @@
 class CreateBlockTagsTable < ActiveRecord::Migration
   def self.up
     create_table :block_tags do |t|
-      t.integer :block_id# null:false
-      t.text :tag#, null:false
+      t.integer :block_id, null:false
+      t.text :tag, null:false
     end
 
   end

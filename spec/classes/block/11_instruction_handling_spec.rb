@@ -1,7 +1,5 @@
 module FirstLogicTemplate
-
   require 'spec_helper'
-  require_relative '../../../lib/classes/db'
 
   describe 'Block instruction behaviors' do
     def create_block(desc)
