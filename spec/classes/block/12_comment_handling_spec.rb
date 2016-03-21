@@ -3,66 +3,69 @@ module FirstLogicTemplate
   require 'spec_helper'
 
   describe 'Comment' do
-    def create_block(desc)
-      Template.create!(app_id:5,app_name:'Block testing')
-      max = Block.maximum(:seq_id)
-      Block.create(
-          template_id:Template.last.id,
-          seq_id: max.nil? ? 1 : max + 1,
-          block:["BEGIN #{desc}",'END']
-      )
+    before(:all) do
+      Template.create(app_id:7,app_name:'Comment testing')
+    end
+
+    context 'append comments' do
+      before(:all) do
+        Block.create( template_id:Template.last.id,block:["BEGIN append comments",'END'] )
+      end
+      after(:all) do
+        pp Comment.all
+      end
+
+      it 'should have seq_id 1 on first append' do
+        Comment.create!(text:'Append 1',block_id:Block.last.id)
+        expect(Comment.last.seq_id).to eq(1)
+      end
+      it 'should have seq_id 2 on second append' do
+        Comment.create!(text:'',block_id:Block.last.id)
+        expect(Comment.last.seq_id).to eq(2)
+      end
+      it 'should have seq_id 3 on third append' do
+        Comment.create!(text:'Append 3',block_id:Block.last.id)
+        expect(Comment.last.seq_id).to eq(3)
+      end
+    end
+
+    context 'insert' do
+      before(:all) do
+        Block.create( template_id:Template.last.id,block:["BEGIN insert comments",'END'] )
+        3.times {|i| Comment.create!(text:"Insert #{i}",block_id:Block.last.id) }
+      end
+
+      it 'should insert an comment into block' do
+        expect(Comment.create!( text:'First insert',block_id:Block.last.id,seq_id:2 )).to be_truthy
+      end
+      it 'should have four comment in block' do
+        expect(Comment.where( 'block_id = ?',Block.last.id).count).to eq(4)
+      end
+      it 'should have placed the inserted row at position two' do
+        expect(
+            Comment.where('block_id = ? and text = ?',Block.last.id,'First insert').first
+        ).to eq(2)
+      end
+      it 'should incr seq_id of the original rows 2 & 3' do
+        expect(
+            Comment.where('block_id = ? and text = ?',Block.last.id,'Second append').first
+        ).to eq(3)
+        expect(
+            Comment.where('block_id = ? and text = ?',Block.last.id,'Third append').first
+        ).to eq(4)
+      end
+      it 'should raise error if :at is greater than max seq_id' do
+        Comment.create!( text: 'invalid insert 99',block_id: 11, seq_id: 99 )
+      end
+      it 'should raise error if :at is less than one' do
+        Comment.create!( text: 'invalid insert -1',block_id: 11, seq_id: -1 )
+      end
     end
 
     describe 'Behaviors' do
       def append_comment(o,b)
-        i = Comment.new( text: o,block_id: b )
-        i.save!
+        i = Comment.create!( text: o,block_id: b )
         i
-      end
-
-      context 'append and insert' do
-        context 'append comments' do
-          it 'should have seq_id 1 on first insert' do
-            expect(append_comment('Comment 1',10).seq_id).to eq(1)
-          end
-          it 'should have seq_id 2 on second insert' do
-            expect(append_comment('',10).seq_id).to eq(2)
-          end
-          it 'should have seq_id 3 on third insert' do
-            expect(append_comment('Comment 3',10).seq_id).to eq(3)
-          end
-        end
-
-        context 'insert' do
-          before(:all) do
-            append_comment('First append',11)  #seq_id = 1
-            append_comment('Second append',11) #seq_id = 2
-            append_comment('Third append',11)  #seq_id = 3
-          end
-
-          it 'should insert an comment into block' do
-            expect(Comment.create!( text:'First insert',block_id:11,at:2 )).to be_truthy
-          end
-          it 'should have four comment in block' do
-            expect(Comment.where( 'block_id = ?',11 ).count).to eq(4)
-          end
-          it 'should have placed the inserted row at position two' do
-            i = Comment.where('block_id = ? and text = ?',11,'First insert').first
-            expect(i.seq_id).to eq(2)
-          end
-          it 'should incr seq_id of the original rows 2 & 3' do
-            i = Comment.where('block_id = ? and text = ?',11,'Second append').first
-            expect(i.seq_id).to eq(3)
-            i = Comment.where('block_id = ? and text = ?',11,'Third append').first
-            expect(i.seq_id).to eq(4)
-          end
-          it 'should raise error if :at is greater than max seq_id' do
-            Comment.create!( text: 'invalid insert 99',block_id: 11, seq_id: 99 )
-          end
-          it 'should raise error if :at is less than one' do
-            Comment.create!( text: 'invalid insert -1',block_id: 11, seq_id: -1 )
-          end
-        end
       end
 
       context 'delete' do

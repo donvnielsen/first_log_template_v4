@@ -48,8 +48,7 @@ class Block < ActiveRecord::Base
     rc
   end
 
-  # save parameter from caller, but clone it before parsing
-  # parsing shifts and pops values from the argument
+  # save parameter from caller
   def block=(o)
     @block = Block.parse(o)
   end
@@ -59,20 +58,11 @@ class Block < ActiveRecord::Base
     Instruction.where('block_id = ?',self.id).each(&block)
   end
 
-  # instructions are in an array, from BEGIN to END
-  # @param [Hash] options parameter options
-  # @option options [Array] :block instruction block
-  # @option options [Integer] :template_id required template id
-  # @option options [Integer] :seq_id when inserting a new block
-  # def initialize(params)
-  #   @params = params
-  #   super(params)
-  # end
-
   # post initialize processing
   def after_init
-    self.name = @block[:name] unless self.block.nil?
-    # Template.find(self.template_id) if self.valid?
+    if new_record?
+      self.name = @block[:name] unless self.block.nil?
+    end
   end
 
   # block instructions in seq_id order
