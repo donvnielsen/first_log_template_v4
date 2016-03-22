@@ -85,26 +85,30 @@ module FirstLogicTemplate
 
     context 'pop' do
       before(:all) do
-        @blk = create_block('pop test')
-        11.times {|i| append_comment("pop (#{i+1}) = arg #{i+1}", @blk.id) }
-        Comment.delete_all(['block_id = ? and seq_id = ?', @blk.id, 4])
+        Block.create( template_id:Template.last.id,block:["BEGIN Pop comments",'END'] )
+        10.times {|i| Comment.create!(text:"Append #{i+1}",block_id:Block.last.id) }
       end
+
       it 'should default to one if n is not specified' do
-        ary = Comment.pop_c(@blk.id)
-        expect(ary.size).to eq(1)
-        expect(ary[0].seq_id).to eq(10)
-        expect(Comment.where('block_id = ?',@blk.id).count).to eq(9)  #remember, (4) was deleted previously
+        cc = Comment.pop_c(Block.last.id)
+        expect(cc.size).to eq(1)
+        expect(cc[0].seq_id).to eq(10)
+        expect(Comment.where('block_id = ?',Block.last.id).count).to eq(9)
+        Comment.all.where('block_id = ?',Block.last.id).each_with_index {|i,x|
+          expect(i.seq_id).to eq(x+1)
+        }
       end
       it 'should pop n instructions when n is specified' do
-        ary = Comment.pop_c(@blk.id, 3)
-        expect(ary.size).to eq(3)
-        expect(Comment.where('block_id = ?',@blk.id).count).to eq(6)
-        Comment.all.where('block_id = ?',@blk.id).each_with_index {|i,x|
+        cc = Comment.pop_c(Block.last.id, 3)
+        expect(cc.size).to eq(3)
+        expect(Comment.where('block_id = ?',Block.last.id).count).to eq(6)
+        Comment.all.where('block_id = ?',Block.last.id).each_with_index {|i,x|
           expect(i.seq_id).to eq(x+1)
         }
       end
       it 'should fail when pop n is greater than # of instructions' do
-        expect{Comment.pop_c(@blk.id, 10)}.to raise_error(ArgumentError)
+        expect{Comment.pop_c(Block.last.id, 10)}.to raise_error(ArgumentError)
+        expect{Comment.pop_c(Block.last.id, -1)}.to raise_error(ArgumentError)
       end
 
     end
