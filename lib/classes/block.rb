@@ -137,10 +137,18 @@ class Block < ActiveRecord::Base
   end
 
   def add_tag(tag)
-    begin
-      BlockTag.create(block_id: self.id,tag: tag)
-    rescue ActiveRecord::RecordNotUnique
-    end
+    BlockTag.create!(block_id: self.id,tag: tag) unless tagged?(tag)
+  end
+
+  def remove_tag(tag)
+    tt = case
+           when tag == :all
+             BlockTag.where('block_id = ?',self.id)
+           else
+             BlockTag.where('block_id = ? and tag = ?',self.id,tag)
+         end
+    raise ArgumentError,"Tag '#{tag}' not applied to block" if tag != :all && tt.count == 0
+    tt.each {|tag| tag.destroy}
   end
 
   protected
