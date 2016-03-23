@@ -58,6 +58,10 @@ class Block < ActiveRecord::Base
     Instruction.where('block_id = ?',self.id).each(&block)
   end
 
+  # def initialize(params)
+  #   block.parse(params.delete(:ins)) if params.has_key?(:ins)
+  #   super(params)
+  # end
   # post initialize processing
   def after_init
     if new_record?

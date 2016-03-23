@@ -7,7 +7,7 @@ class Instruction < ActiveRecord::Base
   belongs_to :block
   has_many :instruction_tags
 
-  before_validation :fname_transformations
+  # before_validation :fname_transformations
   before_validation :set_seq_id, on: [:create,:save]
 
   validates_presence_of :parm
@@ -55,8 +55,8 @@ class Instruction < ActiveRecord::Base
   end
 
   def Instruction.has_fname?(o)
-    return false if o.nil?
-    !( TEST_FOR_FNAME.match(o) || TEST_FOR_PATH.match(o) ).nil?
+    # return false if o.nil?
+    # !( TEST_FOR_FNAME.match(o) || TEST_FOR_PATH.match(o) ).nil?
   end
 
   def Instruction.pop_i(block_id,j=1)
