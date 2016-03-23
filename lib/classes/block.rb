@@ -119,7 +119,9 @@ class Block < ActiveRecord::Base
   # === These process after saving. The block id is required prior
   #     to writing instructions and comments
   def store_instructions
-    @block[:ii].each {|i| Instruction.create!(ins:i,block_id:self.id) } unless @block.nil?
+    @block[:ii].each {|i|
+      Instruction.create!(ins:i,block_id:self.id)
+    } unless @block.nil?
   end
 
   def store_comments
@@ -141,7 +143,10 @@ class Block < ActiveRecord::Base
   end
 
   def add_tag(tag)
-    BlockTag.create!(block_id: self.id,tag: tag) unless tagged?(tag)
+    begin
+      BlockTag.create!(block_id: self.id,tag: tag) unless tagged?(tag)
+    rescue ActiveRecord::RecordNotUnique
+    end
   end
 
   def remove_tag(tag)

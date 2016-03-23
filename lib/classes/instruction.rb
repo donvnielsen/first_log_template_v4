@@ -7,14 +7,16 @@ class Instruction < ActiveRecord::Base
   belongs_to :block
   has_many :instruction_tags
 
-  # before_validation :fname_transformations
+  before_validation :fname_transformations
   before_validation :set_seq_id, on: [:create,:save]
+
+  after_save :post_tags #, on: :create
 
   validates_presence_of :parm
   validates_presence_of :block_id
   validates_presence_of :seq_id, on: :update
 
-  # attr_accessor :block_id,:parm,:arg,:seq_id,:is_fname
+  # attr_accessor :block_id,:parm,:arg,:seq_id
 
   # delete_all requires an array in the form [sql,block_id,...]
   # the array is passed on thru super
@@ -116,11 +118,43 @@ class Instruction < ActiveRecord::Base
     sprintf('%s%s = %s',self.parm,'.'*(p < 0 ? 0 : p),self.arg.nil? ? '' : self.arg)
   end
 
+  def tags
+    tt = []
+    InstructionTag.where('instruction_id = ?',self.id).each {|t| tt << t.tag }
+    tt
+  end
+
+  def tagged?(tag)
+    !InstructionTag.where('instruction_id = ? and tag = ?',self.id,tag).first.nil?
+  end
+
+  def add_tag(tag)
+    begin
+      InstructionTag.create!(instruction_id: self.id,tag: tag) unless tagged?(tag)
+    rescue ActiveRecord::RecordNotUnique
+    end
+  end
+
+  def remove_tag(tag)
+    tt = case
+           when tag == :all
+             InstructionTag.where('instruction_id = ?',self.id)
+           else
+             InstructionTag.where('instruction_id = ? and tag = ?',self.id,tag)
+         end
+    # raise ArgumentError,"Tag '#{tag}' not applied to instruction" if tag != :all && tt.count == 0
+    tt.each {|tag| tag.destroy}
+  end
+
   protected
 
   def fname_transformations
-    self.is_fname = !TEST_FOR_FNAME.match(@parm).nil?
-    self.arg = @arg.gsub('\\', '/') if Instruction.has_fname?(@parm)
+    case
+      when !TEST_FOR_FNAME.match(@parm).nil?
+        self.arg = @arg.gsub('\\', '/')
+      when !TEST_FOR_PATH.match(@parm).nil?
+        self.arg = @arg.gsub('\\', '/')
+    end
   end
 
   def set_seq_id
@@ -137,7 +171,18 @@ class Instruction < ActiveRecord::Base
                   ii.each {|i| i.update(seq_id:i.seq_id+1) }
                   @seq_id
               end
+  end
 
+  def post_tags
+    case
+      when TEST_FOR_FNAME.match(self.parm)
+        self.add_tag('file_name')
+      when TEST_FOR_PATH.match(self.parm)
+        self.add_tag('directory')
+
+    end
+    # self.is_fname = !TEST_FOR_FNAME.match(@parm).nil?
+    # self.arg = @arg.gsub('\\', '/') if Instruction.has_fname?(@parm)
   end
 
 end
