@@ -57,8 +57,8 @@ class Instruction < ActiveRecord::Base
   end
 
   def Instruction.has_fname?(o)
-    # return false if o.nil?
-    # !( TEST_FOR_FNAME.match(o) || TEST_FOR_PATH.match(o) ).nil?
+    return false if o.nil?
+    !( TEST_FOR_FNAME.match(o) || TEST_FOR_PATH.match(o) ).nil?
   end
 
   def Instruction.pop_i(block_id,j=1)
@@ -179,10 +179,7 @@ class Instruction < ActiveRecord::Base
         self.add_tag('file_name')
       when TEST_FOR_PATH.match(self.parm)
         self.add_tag('directory')
-
     end
-    # self.is_fname = !TEST_FOR_FNAME.match(@parm).nil?
-    # self.arg = @arg.gsub('\\', '/') if Instruction.has_fname?(@parm)
   end
 
 end
