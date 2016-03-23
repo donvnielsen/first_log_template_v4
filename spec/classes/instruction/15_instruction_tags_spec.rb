@@ -13,7 +13,7 @@ module FirstLogicTemplate
               'END'
           ]
       )
-      @ix = Instruction.where('block_id = ?',Block.last.id).first
+      @ix = Block.last.instructions.first
     end
 
     it 'should not have any tags for instruction' do

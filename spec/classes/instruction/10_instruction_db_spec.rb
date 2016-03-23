@@ -122,7 +122,7 @@ module FirstLogicTemplate
             expect( Instruction.create(parm:'First insert',arg:'4th arg',block_id:Block.last.id,seq_id:2) ).to be_truthy
           end
           it 'should have the correct number of instructions in block' do
-            expect(Instruction.where( 'block_id = ?',Block.last.id ).count).to eq(4)
+            expect(Block.last.instructions.count).to eq(4)
           end
           it 'should have placed the inserted row at position two' do
             i = Instruction.where( 'block_id = ? and parm = ?',Block.last.id,'First insert' ).first
@@ -163,8 +163,7 @@ module FirstLogicTemplate
           expect( Instruction.delete_all(['block_id = ? and seq_id = ?', Block.last.id, 4]) ).to eq(1)
         end
         it 'should reset seq_ids after delete' do
-          ii = Instruction.where( 'block_id = ?', Block.last.id ).order(:seq_id)
-          ii.each_with_index {|i,x| expect(i.seq_id).to eq(x+1) }
+          Block.last.instructions.each_with_index {|i,x| expect(i.seq_id).to eq(x+1) }
         end
 
       end
@@ -179,15 +178,13 @@ module FirstLogicTemplate
           ary = Instruction.pop_i(Block.last.id)
           expect(ary.size).to eq(1)
           expect(ary[0].seq_id).to eq(10)
-          expect(Instruction.where('block_id = ?',Block.last.id).count).to eq(9)  #remember, (4) was deleted previously
+          expect(Block.last.instructions.count).to eq(9)  #remember, (4) was deleted previously
         end
         it 'should pop n instructions when n is specified' do
           ary = Instruction.pop_i(Block.last.id, 3)
           expect(ary.size).to eq(3)
-          expect(Instruction.where('block_id = ?',Block.last.id).count).to eq(6)
-          Instruction.all.where('block_id = ?',Block.last.id).each_with_index {|i,x|
-            expect(i.seq_id).to eq(x+1)
-          }
+          expect(Block.last.instructions.count).to eq(6)
+          Block.last.instructions.each_with_index {|i,x| expect(i.seq_id).to eq(x+1) }
         end
         it 'should fail when pop n is greater than # of instructions' do
           expect{Instruction.pop_i(Block.last.id, 10)}.to raise_error(ArgumentError)
