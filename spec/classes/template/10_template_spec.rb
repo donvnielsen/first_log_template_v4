@@ -32,7 +32,7 @@ module FirstLogicTemplate
 
   describe 'insert a block' do
     before(:all) do
-      Template.create(app_id:2,app_name:'Insert block test')
+      Template.create(app_id:3,app_name:'Insert block test')
       5.times{|i|
         Block.create( template_id:Template.last.id,block:["BEGIN Insert block test #{i+1}",'END'] )
       }
@@ -57,7 +57,7 @@ module FirstLogicTemplate
 
   describe 'Deleting a block from many blocks' do
     before(:all) do
-      Template.create(app_id:2,app_name:'Delete block test')
+      Template.create(app_id:4,app_name:'Delete block test')
       10.times{|i|
         Block.create( template_id:Template.last.id,block:["BEGIN Delete block test #{i+1}",'END'] )
       }

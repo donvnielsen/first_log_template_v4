@@ -2,7 +2,7 @@ module FirstLogicTemplate
 
   require 'spec_helper'
 
-  describe 'Block comment' do
+  describe 'Block comment testing' do
     before(:all) do
       Template.create(app_id:7,app_name:'Comment testing')
     end
@@ -77,8 +77,7 @@ module FirstLogicTemplate
       it 'should delete the specified comment from block' do
         expect(BlockComment.delete_all(['block_id = ? and seq_id = ?', Block.last.id, 4]) ).to eq(1)
         expect(BlockComment.where('block_id = ?', Block.last.id).maximum(:seq_id)).to eq(7)
-        cc = BlockComment.where('block_id = ?', Block.last.id )
-        cc.each_with_index {|c,x| expect(c.seq_id).to eq(x+1) }
+        Block.last.block_comments.each_with_index {|c,x| expect(c.seq_id).to eq(x+1) }
       end
 
     end
@@ -93,18 +92,14 @@ module FirstLogicTemplate
         cc = BlockComment.pop_c(Block.last.id)
         expect(cc.size).to eq(1)
         expect(cc[0].seq_id).to eq(10)
-        expect(BlockComment.where('block_id = ?', Block.last.id).count).to eq(9)
-        BlockComment.all.where('block_id = ?', Block.last.id).each_with_index {|i,x|
-          expect(i.seq_id).to eq(x+1)
-        }
+        expect(Block.last.block_comments.count).to eq(9)
+        Block.last.block_comments.each_with_index {|i,x| expect(i.seq_id).to eq(x+1) }
       end
       it 'should pop n instructions when n is specified' do
         cc = BlockComment.pop_c(Block.last.id, 3)
         expect(cc.size).to eq(3)
-        expect(BlockComment.where('block_id = ?', Block.last.id).count).to eq(6)
-        BlockComment.all.where('block_id = ?', Block.last.id).each_with_index {|i,x|
-          expect(i.seq_id).to eq(x+1)
-        }
+        expect(Block.last.block_comments.count).to eq(6)
+        Block.last.block_comments.each_with_index {|i,x| expect(i.seq_id).to eq(x+1) }
       end
       it 'should fail when pop n is greater than # of instructions' do
         expect{BlockComment.pop_c(Block.last.id, 10)}.to raise_error(ArgumentError)

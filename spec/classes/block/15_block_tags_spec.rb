@@ -45,11 +45,11 @@ module FirstLogicTemplate
       end
       it 'should remove the specified tag' do
         expect{Block.last.remove_tag('file_name')}.to_not raise_error
-        expect(BlockTag.where('block_id = ?',Block.last.id).size).to eq(4)
+        expect(Block.last.block_tags.size).to eq(4)
       end
       it 'should remove all tags' do
         expect{Block.last.remove_tag(:all)}.to_not raise_error
-        expect(BlockTag.where('block_id = ?',Block.last.id).size).to eq(0)
+        expect(Block.last.block_tags.size).to eq(0)
       end
     end
   end

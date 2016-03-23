@@ -26,14 +26,9 @@ module FirstLogicTemplate
       it 'should parse the parm' do
         expect(Instruction.last.parm).to eq('Work File Directory (path)')
       end
-      it 'should parse the arg, transform the file name'
-      # do
-      #   expect(Instruction.last.arg).to eq('E:/CLIENT/ABC123/614506/PS01/WORK')
-      # end
-      it 'should identify instruction has file name'
-      # do
-      #   expect(Instruction.last.is_fname).to eq(false) # it is a path
-      # end
+      it 'should parse the arg, transform the file name' do
+        expect(Instruction.last.arg).to eq('E:/CLIENT/ABC123/614506/PS01/WORK')
+      end
       it 'should be a valid instruction' do
        expect(Instruction.last.valid?).to eq(true)
       end
@@ -91,27 +86,6 @@ module FirstLogicTemplate
         expect(@i.to_s).to eq('Testing... = 123')
       end
 
-      context 'file name instructions' do
-
-        it 'should set false when parm contains "directory"'
-        # do
-        #   parm,arg = Instruction.parse('Work File Directory (path).. = E:/CLIENT/ABC123/614506/')
-        #   i = Instruction.create(
-        #       parm:parm,arg:arg,
-        #       block_id:Block.last.id
-        #   )
-        #   # expect(i.is_fname?).to be_falsey
-        # end
-        it 'should set true when parm contains "file name"'
-        # do
-        #   parm,arg = Instruction.parse('Input File Name (path & file name).. = E:/614506/PS01/DATA/PWPREP.TXT')
-        #   i = Instruction.create(
-        #       parm:parm,arg:arg,
-        #       block_id:Block.last.id
-        #   )
-        #   # expect(i.is_fname?).to be_truthy
-        # end
-      end
     end
 
     context 'Behaviors' do
@@ -220,6 +194,11 @@ module FirstLogicTemplate
         end
 
       end
+    end
+
+    describe 'searching instructions using tag(s)' do
+      it 'should search with one tag'
+      it 'should search with multiple tags'
     end
 
     context 'Formats' do

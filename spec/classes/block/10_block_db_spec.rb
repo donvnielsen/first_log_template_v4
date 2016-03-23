@@ -4,7 +4,7 @@ module FirstLogicTemplate
   describe 'validation without array of instructions' do
     before(:all) do
       Template.create(app_id:3,app_name:'Block testing')
-      Block.create(template_id:Template.last.id,name:'instruction array omitted')
+      Block.create(template_id:Template.last.id,name:'Instruction array omitted')
     end
     it 'shouldnt have name errors' do
       expect(Block.last.errors[:name].any?).to be_falsey
@@ -24,11 +24,11 @@ module FirstLogicTemplate
 
     context 'template_id existence validated' do
       it 'should fail when template_id is omitted' do
-        expect{ Block.create!(name:'template id omitted') }.to raise_error(ActiveRecord::RecordInvalid)
+        expect{ Block.create!(name:'Template id omitted') }.to raise_error(ActiveRecord::RecordInvalid)
       end
       it 'should fail with invalid template id' do
         expect{
-          Block.create!(template_id:99,name:'BEGIN Tests invalid template id')
+          Block.create!(template_id:99,name:'Invalid template id')
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -62,10 +62,9 @@ module FirstLogicTemplate
         end
         it 'should store instructions' do
           expect(Block.last.instructions.size).to eq(7)
-          expect(Instruction.where("block_id = #{Block.last.id}").size).to eq(7)
         end
         it 'should store comments' do
-          expect(BlockComment.where("block_id = #{Block.last.id}").size).to eq(3)
+          expect(Block.last.block_comments.size).to eq(3)
         end
       end
 
@@ -119,24 +118,6 @@ module FirstLogicTemplate
         # retrieve comments and send them
       end
 
-      # context 'File names in instructions' do
-      #   before(:all) do
-      #     @fnames = Block.last.file_names
-      #     puts @fnames
-      #   end
-      #
-      #   it 'should return an array containing the file names' do
-      #     expect(@fnames.is_a?(Array)).to be_truthy
-      #     expect(@fnames.size).to eq(2)
-      #   end
-      #
-      #   it 'should have correct values' do
-      #     ['//a/b/c.txt','//x/y/z.txt'].each_with_index{|arg,i|
-      #       expect(@fnames[i]).to eq(arg)
-      #     }
-      #   end
-      #
-      # end
     end
 
   end

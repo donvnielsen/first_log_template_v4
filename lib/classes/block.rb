@@ -4,8 +4,8 @@ class Block < ActiveRecord::Base
   belongs_to :template
 
   has_many :block_comments,:dependent => :destroy
+  has_many :block_tags,:dependent => :destroy
   has_many :instructions,:dependent => :destroy
-  # has_many :block_tags,:dependent => :destroy
 
   include Enumerable
 
@@ -55,13 +55,10 @@ class Block < ActiveRecord::Base
 
   # instruction iterator
   def each(&block)
-    Instruction.where('block_id = ?',self.id).each(&block)
+    self.instructions.each(&block)
+    # Instruction.where('block_id = ?',self.id).each(&block)
   end
 
-  # def initialize(params)
-  #   block.parse(params.delete(:ins)) if params.has_key?(:ins)
-  #   super(params)
-  # end
   # post initialize processing
   def after_init
     if new_record?
@@ -70,14 +67,9 @@ class Block < ActiveRecord::Base
   end
 
   # block instructions in seq_id order
-  def instructions
-    Instruction.where('block_id = ?',self.id).order(:seq_id)
-  end
-
-  # block comments in seq_id order
-  def comments
-    BlockComment.where('block_id = ?', self.id).order(:seq_id)
-  end
+  # def instructions
+  #   Instruction.where('block_id = ?',self.id).order(:seq_id)
+  # end
 
   def file_names
     ff = []
