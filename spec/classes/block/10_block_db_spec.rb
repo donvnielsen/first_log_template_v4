@@ -65,7 +65,7 @@ module FirstLogicTemplate
           expect(Instruction.where("block_id = #{Block.last.id}").size).to eq(7)
         end
         it 'should store comments' do
-          expect(Comment.where("block_id = #{Block.last.id}").size).to eq(3)
+          expect(BlockComment.where("block_id = #{Block.last.id}").size).to eq(3)
         end
       end
 

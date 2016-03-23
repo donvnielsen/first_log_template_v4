@@ -1,6 +1,6 @@
-class CreateCommentsTable < ActiveRecord::Migration
+class CreateBlockCommentsTable < ActiveRecord::Migration
   def self.up
-    create_table :comments do |t|
+    create_table :block_comments do |t|
       t.integer :block_id, null:false
       t.integer :seq_id, null:false
       t.text :text
@@ -9,6 +9,6 @@ class CreateCommentsTable < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :comments
+    drop_table :block_comments
   end
 end

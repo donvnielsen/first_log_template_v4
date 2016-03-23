@@ -3,7 +3,7 @@ module FirstLogicTemplate
 class Block < ActiveRecord::Base
   belongs_to :template
 
-  has_many :comments,:dependent => :destroy
+  has_many :block_comments,:dependent => :destroy
   has_many :instructions,:dependent => :destroy
   # has_many :block_tags,:dependent => :destroy
 
@@ -72,7 +72,7 @@ class Block < ActiveRecord::Base
 
   # block comments in seq_id order
   def comments
-    Comment.where('block_id = ?',self.id).order(:seq_id)
+    BlockComment.where('block_id = ?', self.id).order(:seq_id)
   end
 
   def file_names
@@ -119,7 +119,7 @@ class Block < ActiveRecord::Base
   end
 
   def store_comments
-    @block[:cc].each {|c| Comment.create!(text:c,block_id:self.id) } unless @block.nil?
+    @block[:cc].each {|c| BlockComment.create!(text:c, block_id:self.id) } unless @block.nil?
   end
 
   def update_seq_ids(i=0)
