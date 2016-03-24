@@ -31,6 +31,21 @@ module FirstLogicTemplate
       end
     end
 
+    context 'searching for tags' do
+      before(:all) do
+        Block.create(template_id:Template.last.id,name:'Search block tags')
+        expect(Block.last.add_tag('report').is_a?(BlockTag)).to be_truthy
+        expect(Block.last.add_tag('entry_pt').is_a?(BlockTag)).to be_truthy
+        expect(Block.last.add_tag('version').is_a?(BlockTag)).to be_truthy
+      end
+      it 'should find a single tag value' do
+        expect(Block.last.tagged?('version')).to be_truthy
+      end
+      it 'should find any one of array' do
+        expect(Block.last.tagged?(['version','entry_pt'])).to be_truthy
+      end
+    end
+
     context 'remove tags' do
       before(:all) do
         Block.create(template_id:Template.last.id,name:'remove tag')

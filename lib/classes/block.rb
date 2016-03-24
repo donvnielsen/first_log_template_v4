@@ -126,8 +126,14 @@ class Block < ActiveRecord::Base
     }
   end
 
-  def tagged?(tag)
-    !BlockTag.where('block_id = ? and tag = ?',self.id,tag).first.nil?
+  def tagged?(tags)
+    case
+      when tags.is_a?(Array)
+        self.block_tags.collect {|bt| return true if tags.include?(bt.tag) }
+      else
+        self.block_tags.collect {|bt| return true if bt.tag == tags }
+    end
+    false
   end
 
   def add_tag(tag)
