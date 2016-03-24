@@ -126,10 +126,6 @@ class Block < ActiveRecord::Base
     }
   end
 
-  def tags
-    BlockTag.where('block_id = ?',self.id)
-  end
-
   def tagged?(tag)
     !BlockTag.where('block_id = ? and tag = ?',self.id,tag).first.nil?
   end

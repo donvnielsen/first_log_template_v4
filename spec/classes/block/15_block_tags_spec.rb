@@ -24,8 +24,8 @@ module FirstLogicTemplate
         expect(Block.last.tagged?('general')).to_not be_truthy
       end
       it 'return list of tags' do
-        expect(Block.last.tags.size).to eq(2)
-        Block.last.tags.each {|btag|
+        expect(Block.last.block_tags.size).to eq(2)
+        Block.last.block_tags.each {|btag|
           expect(['report','mail.dat'].include?(btag.tag)).to be_truthy
         }
       end
