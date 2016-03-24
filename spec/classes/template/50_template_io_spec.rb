@@ -34,6 +34,7 @@ module FirstLogicTemplate
     before(:all) do
       Template.create(app_id:10,app_name:'File import testing')
       Template.last.import('./spec/data/test_template.txt')
+      # Template.last.import('./spec/data/test_presort_template.pst')
     end
     it 'should have a file name' do
       expect(Template.last.input_file_name).to eq('./spec/data/test_template.txt')
