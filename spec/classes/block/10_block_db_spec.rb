@@ -89,7 +89,7 @@ module FirstLogicTemplate
             '* Block comment 2',
         ]
         j = -1
-        Block.last.comments.each {|c| expect(c.to_s).to eq(cc[j+=1])}
+        Block.last.block_comments.each {|c| expect(c.to_s).to eq(cc[j+=1])}
       end
 
       context 'Behaviors' do

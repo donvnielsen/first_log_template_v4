@@ -97,7 +97,7 @@ class Block < ActiveRecord::Base
 
   def to_a
     bb = []
-    self.comments.each{|c| bb << c.to_s }
+    self.block_comments.each{|c| bb << c.to_s }
     bb << sprintf('BEGIN %s',self.name)
     self.instructions.each{|i| bb << i.to_s}
     bb << 'END'

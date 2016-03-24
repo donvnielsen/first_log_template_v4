@@ -58,7 +58,7 @@ module FirstLogicTemplate
         ['report','version','file_name','directory'].each {|t| @ix.add_tag(t) }
       end
       it 'should return error when removing non-existent tag' do
-        expect{@ix.remove_tag('xxx')}.to_not raise_error(ArgumentError)
+        expect{@ix.remove_tag('xxx')}.to_not raise_error #(ArgumentError)
       end
       it 'should remove the specified tag' do
         expect{@ix.remove_tag('file_name')}.to_not raise_error
