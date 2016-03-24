@@ -127,11 +127,6 @@ module FirstLogicTemplate
     end
   end
 
-  describe 'searching blocks using tag(s)' do
-    it 'should search with one tag'
-    it 'should search with multiple tags'
-  end
-
   describe 'importing template' do
     it 'should have a file name'
     it 'should have an application id and description'

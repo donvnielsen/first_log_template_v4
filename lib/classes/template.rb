@@ -12,6 +12,12 @@ class Template < ActiveRecord::Base
     self.blocks.each(&block)
   end
 
+  def to_a
+    tt = []
+    self.blocks.each{|b| tt << b.to_a }
+    tt.flatten
+  end
+
   protected
 
   def set_create_date
