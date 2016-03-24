@@ -193,11 +193,6 @@ module FirstLogicTemplate
       end
     end
 
-    describe 'searching instructions using tag(s)' do
-      it 'should search with one tag'
-      it 'should search with multiple tags'
-    end
-
     context 'Formats' do
       before(:all) do
         @prm = 'Test instruction formatting'

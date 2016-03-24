@@ -5,7 +5,7 @@ class Instruction < ActiveRecord::Base
   TEST_FOR_PATH = /(directory|path)/i
 
   belongs_to :block
-  has_many :instruction_tags
+  has_many :instruction_tags,:dependent => :destroy
 
   before_validation :fname_transformations
   before_validation :set_seq_id, on: [:create,:save]
@@ -15,8 +15,6 @@ class Instruction < ActiveRecord::Base
   validates_presence_of :parm
   validates_presence_of :block_id
   validates_presence_of :seq_id, on: :update
-
-  # attr_accessor :block_id,:parm,:arg,:seq_id
 
   # delete_all requires an array in the form [sql,block_id,...]
   # the array is passed on thru super
@@ -118,14 +116,18 @@ class Instruction < ActiveRecord::Base
     sprintf('%s%s = %s',self.parm,'.'*(p < 0 ? 0 : p),self.arg.nil? ? '' : self.arg)
   end
 
-  def tags
-    tt = []
-    InstructionTag.where('instruction_id = ?',self.id).each {|t| tt << t.tag }
-    tt
+  def instruction_tags
+    InstructionTag.where('instruction_id = ?',self.id)
   end
 
-  def tagged?(tag)
-    !InstructionTag.where('instruction_id = ? and tag = ?',self.id,tag).first.nil?
+  def tagged?(tags)
+    case
+      when tags.is_a?(Array)
+        self.instruction_tags.collect {|it| return true if tags.include?(it.tag) }
+      else
+        self.instruction_tags.collect {|it| return true if it.tag == tags }
+    end
+    false
   end
 
   def add_tag(tag)

@@ -28,8 +28,8 @@ module FirstLogicTemplate
         expect{@ix.add_tag('add_tag')}.to_not raise_error
       end
       it 'return list of tags' do
-        expect(@ix.tags.size).to eq(1)
-        expect(@ix.tags.include?('add_tag') ).to be_truthy
+        expect(@ix.instruction_tags.size).to eq(1)
+        expect(@ix.tagged?('add_tag') ).to be_truthy
       end
     end
 
@@ -47,9 +47,30 @@ module FirstLogicTemplate
 
       it 'should identify if it has a tag' do
         expect(@id.tagged?('directory')).to be_truthy
-        expect(@id.tagged?('file_name')).to be_falsey
         expect(@if.tagged?('file_name')).to be_truthy
+      end
+
+      it 'should fail identifying tags' do
+        expect(@id.tagged?('file_name')).to be_falsey
         expect(@if.tagged?('directory')).to be_falsey
+      end
+    end
+
+    context 'searching for tags' do
+      before(:all) do
+        Instruction.create!(
+            block_id:Block.last.id,
+            ins:'Search instruction tags = xxx'
+        )
+        Instruction.last.add_tag('report')
+        Instruction.last.add_tag('entry_pt')
+        Instruction.last.add_tag('version')
+      end
+      it 'should find a single tag value' do
+        expect(Instruction.last.tagged?('version')).to be_truthy
+      end
+      it 'should find any one of array' do
+        expect(Instruction.last.tagged?(['version','entry_pt'])).to be_truthy
       end
     end
 
