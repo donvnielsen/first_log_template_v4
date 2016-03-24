@@ -44,7 +44,7 @@ class Instruction < ActiveRecord::Base
     case
       when (ii = /^begin +(?<type>[a-z0-9 .:,()\/%]+) *=*/i.match(i))
         return ['BEGIN',ii[:type].strip]
-      when (/^END ?$/.match(i))
+      when (FL_Regex::RGX_END.match(i))
         return ['END',nil]
       else
         ii = i.split(/\.* *= */,2)

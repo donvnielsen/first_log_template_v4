@@ -42,6 +42,7 @@ class Block < ActiveRecord::Base
     raise ArgumentError,'First block instruction must be BEGIN' unless
         Instruction.parse(rc[:ii].first)[0] == 'BEGIN'
     p,rc[:name] = Instruction.parse(rc[:ii].shift)
+
     raise ArgumentError,'Last block instruction must be END' unless
         Instruction.parse(rc[:ii].pop)[0] == 'END'
 
