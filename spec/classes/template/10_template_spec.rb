@@ -127,22 +127,11 @@ module FirstLogicTemplate
     end
   end
 
-  describe 'importing template' do
-    it 'should have a file name'
-    it 'should have an application id and description'
-    it 'should add an entry to template table and return id'
-    it 'should parse blocks'
-  end
-
-  describe 'exporting template' do
-    it 'should write a new text file template'
-  end
-
   describe 'Delete template' do
     before(:all) do
-      @t = Template.create(app_id:2,app_name:'Template delete test')
+      @t = Template.create!(app_id:2,app_name:'Template delete test')
       5.times{|i|
-        Block.create( template_id:Template.last.id,block:["BEGIN Template delete test #{i+1}",'END'] )
+        Block.create!(template_id:Template.last.id,block:["BEGIN Template delete test #{i+1}",'END'] )
       }
     end
     it 'should delete all related data' do

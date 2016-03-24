@@ -27,5 +27,18 @@ module FirstLogicTemplate
     it 'should display template' do
       pp @ft
     end
+
   end
+
+  describe 'importing template' do
+    it 'should have a file name'
+    it 'should have an application id and description'
+    it 'should add an entry to template table and return id'
+    it 'should parse blocks'
+  end
+
+  describe 'exporting template' do
+    it 'should write a new text file template'
+  end
+
 end

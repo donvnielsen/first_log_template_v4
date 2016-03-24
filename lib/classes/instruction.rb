@@ -1,9 +1,6 @@
 module FirstLogicTemplate
 
 class Instruction < ActiveRecord::Base
-  TEST_FOR_FNAME = /(file name|filename)/i
-  TEST_FOR_PATH = /(directory|path)/i
-
   belongs_to :block
   has_many :instruction_tags,:dependent => :destroy
 
@@ -15,6 +12,9 @@ class Instruction < ActiveRecord::Base
   validates_presence_of :parm
   validates_presence_of :block_id
   validates_presence_of :seq_id, on: :update
+
+  TEST_FOR_FNAME = /(file name|filename)/i
+  TEST_FOR_PATH = /(directory|path)/i
 
   # delete_all requires an array in the form [sql,block_id,...]
   # the array is passed on thru super
