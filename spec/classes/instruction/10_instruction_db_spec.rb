@@ -2,7 +2,6 @@
 module FirstLogicTemplate
 
   require 'spec_helper'
-  require_relative '../../../lib/classes/db'
 
   describe Instruction do
 
