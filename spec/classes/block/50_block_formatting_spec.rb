@@ -40,7 +40,8 @@ module FirstLogicTemplate
         expect(@ary[2]).to eq('* Block comment 2')
       end
       it 'should enclose instructions within BEGIN and END' do
-        expect(@ary[3]).to eq(sprintf('BEGIN %s',@bname))
+        x = sprintf('BEGIN %s',@bname)
+        expect(@ary[3][0,x.length]).to eq(x)
         expect(@ary.last).to eq('END')
       end
 
@@ -72,7 +73,8 @@ module FirstLogicTemplate
         expect(@ary[2]).to eq('* Block comment 2')
       end
       it 'should enclose instructions within BEGIN and END' do
-        expect(@ary[3]).to eq(sprintf('BEGIN %s',@bname))
+        x = sprintf('BEGIN %s',@bname)
+        expect(@ary[3][0,x.length]).to eq(x)
         expect(@ary.last).to eq('END')
       end
 

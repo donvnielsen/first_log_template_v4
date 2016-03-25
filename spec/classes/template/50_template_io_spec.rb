@@ -100,7 +100,18 @@ module FirstLogicTemplate
 
 
   describe 'exporting template' do
-    it 'should write a new text file template'
+    before(:all) do
+      @ex_fname = './db/test_template_export.txt'
+      Template.create(app_id:10,app_name:'File import testing')
+      Template.last.import('./spec/data/test_template.txt')
+      Template.last.export(@ex_fname)
+    end
+    it 'should write a new text file template' do
+      expect(File.exist?(@ex_fname)).to be_truthy
+    end
+    it 'should have number of lines' do
+      expect(File.readlines(@ex_fname).size).to eq(470)
+    end
   end
 
 end

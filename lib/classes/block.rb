@@ -34,14 +34,14 @@ class Block < ActiveRecord::Base
     rc = {ii:instructions,cc:[],name:nil}
 
     while rc[:ii].first.length == 0 || [' ','*','#'].include?(rc[:ii].first[0,1])
-      rc[:cc] << rc[:ii].shift
+      rc[:cc] << rc[:ii].shift.chomp
     end
 
     # ensure block begins with BEGIN, shift it out, then
     # pop off last instruction and make sure it is END
     raise ArgumentError,'First block instruction must be BEGIN' unless
         Instruction.parse(rc[:ii].first)[0] == 'BEGIN'
-    p,rc[:name] = Instruction.parse(rc[:ii].shift)
+    p,rc[:name] = Instruction.parse(rc[:ii].shift.chomp)
 
     raise ArgumentError,'Last block instruction must be END' unless
         Instruction.parse(rc[:ii].pop)[0] == 'END'
@@ -80,14 +80,6 @@ class Block < ActiveRecord::Base
     ff
   end
 
-  def is_report?
-    @is_report
-  end
-
-  def has_fname?
-    @has_fname
-  end
-
   # regexp find of matching instruction parms in block
   def find_all_i(o=/.*/)
     raise ArgumentError,'search criteria must be expressed as a regular expression' unless o.is_a?(Regexp)
@@ -99,14 +91,14 @@ class Block < ActiveRecord::Base
   def to_a
     bb = []
     self.block_comments.each{|c| bb << c.to_s }
-    bb << sprintf('BEGIN %s',self.name)
+    bb << sprintf('BEGIN %s %-80s',self.name,'='*( (x = 70 - self.name.length) < 1 ? 3 : x) )
     self.instructions.each{|i| bb << i.to_s}
     bb << 'END'
     bb.flatten
   end
 
   def to_s
-    self.to_a.join("\n")
+    self.to_a.join("\n") << "\n"
   end
 
   # === These process after saving. The block id is required prior
@@ -157,22 +149,22 @@ class Block < ActiveRecord::Base
 
   protected
 
-  # ==== these process prior to validations
-
-  # identifies if block is report block
-  def set_is_report
-    @is_report = !TEST_FOR_REPORT.match(@name).nil?
-  end
-
-  # identifies if any instruction parm indicates a file name
-  def set_has_fname
-    @params[:ii].each {|parm,arg|
-      @has_fname = Instruction.has_fname?(parm)
-      break if @has_fname
-    }
-    @has_fname
-  end
-
+  # # ==== these process prior to validations
+  #
+  # # identifies if block is report block
+  # def set_is_report
+  #   @is_report = !TEST_FOR_REPORT.match(@name).nil?
+  # end
+  #
+  # # identifies if any instruction parm indicates a file name
+  # def set_has_fname
+  #   @params[:ii].each {|parm,arg|
+  #     @has_fname = Instruction.has_fname?(parm)
+  #     break if @has_fname
+  #   }
+  #   @has_fname
+  # end
+  #
   def set_seq_id
     max = Block.where('template_id = ?',self.template_id).maximum(:seq_id) || 0
     self.seq_id = case

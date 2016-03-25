@@ -58,6 +58,10 @@ class Template < ActiveRecord::Base
     end
   end
 
+  def export(fl)
+    File.open(fl,'w') {|of| self.blocks.each{|b| of.puts b.to_s << "\n"}  }
+  end
+
   protected
 
   def set_create_date

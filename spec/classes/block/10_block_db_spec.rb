@@ -112,10 +112,6 @@ module FirstLogicTemplate
           }
         end
 
-        it 'should be able to clone itself'
-        # create new block instance
-        # retrieve instructions and send them
-        # retrieve comments and send them
       end
 
     end
