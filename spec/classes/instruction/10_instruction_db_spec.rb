@@ -1,5 +1,5 @@
 
-module FirstLogicTemplate
+module FL_Template
 
   require 'spec_helper'
 

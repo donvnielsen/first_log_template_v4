@@ -16,7 +16,7 @@ require_relative '../lib/classes/instruction_tag'
 
 require 'pp'
 
-module FirstLogicTemplate
+module FL_Template
   DB_NAME = 'db/test_template.db'
   DDL_NAME = 'lib/sql/db_ddl.sql'
   # MIGRATIONS = 'lib/migrations'

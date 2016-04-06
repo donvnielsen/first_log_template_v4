@@ -1,4 +1,4 @@
-module FirstLogicTemplate
+module FL_Template
 
   class BlockComment < ActiveRecord::Base
     self.table_name = 'fl_block_comments'

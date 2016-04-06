@@ -1,4 +1,4 @@
-module FirstLogicTemplate
+module FL_Template
   require 'spec_helper'
 
   describe 'Formatting template' do

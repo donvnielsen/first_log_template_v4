@@ -1,4 +1,4 @@
-module FirstLogicTemplate
+module FL_Template
 
 class Template < ActiveRecord::Base
   self.table_name = 'fl_templates'

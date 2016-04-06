@@ -1,4 +1,4 @@
-module FirstLogicTemplate
+module FL_Template
   require 'spec_helper'
 
   describe 'validation without array of instructions' do

@@ -1,15 +1,3 @@
-CREATE TABLE d_file_types(
-    id integer primary key
-  , type text
-  , desc text
-);
-
-insert into d_file_types (type,desc) values (null,'not file type instruction');
-insert into d_file_types (type,desc) values ('i', 'input file name');
-insert into d_file_types (type,desc) values ('o', 'output file name');
-insert into d_file_types (type,desc) values ('t', 'true - is file name');
-insert into d_file_types (type,desc) values ('f', 'false - is not file name');
-
 CREATE TABLE fl_templates(
     id integer primary key autoincrement
   , app_id
