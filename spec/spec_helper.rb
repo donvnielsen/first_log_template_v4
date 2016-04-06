@@ -1,7 +1,7 @@
+require 'rspec'
 require 'simplecov'
 # SimpleCov.start
 
-require 'rspec'
 require 'active_record'
 require 'active_record/migration'
 
