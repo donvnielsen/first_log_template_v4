@@ -1,7 +1,7 @@
 module FirstLogicTemplate
 
   class BlockTag < ActiveRecord::Base
-
+    self.table_name = 'fl_block_tags'
     belongs_to :block
 
     validates_presence_of :tag

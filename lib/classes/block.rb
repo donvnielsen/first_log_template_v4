@@ -1,6 +1,7 @@
 module FirstLogicTemplate
 
 class Block < ActiveRecord::Base
+  self.table_name = 'fl_blocks'
   belongs_to :template
 
   has_many :block_comments,:dependent => :destroy

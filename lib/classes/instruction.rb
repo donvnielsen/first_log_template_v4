@@ -1,6 +1,7 @@
 module FirstLogicTemplate
 
 class Instruction < ActiveRecord::Base
+  self.table_name = 'fl_instructions'
   belongs_to :block
   has_many :instruction_tags,:dependent => :destroy
 

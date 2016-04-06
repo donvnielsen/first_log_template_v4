@@ -1,6 +1,7 @@
 module FirstLogicTemplate
 
 class Template < ActiveRecord::Base
+  self.table_name = 'fl_templates'
   has_many :blocks,:dependent => :destroy
   include Enumerable
 

@@ -1,7 +1,7 @@
 module FirstLogicTemplate
 
   class BlockComment < ActiveRecord::Base
-
+    self.table_name = 'fl_block_comments'
   validates_presence_of :block_id
 
   # before_validation :set_seq_id, on: [:create,:save]
