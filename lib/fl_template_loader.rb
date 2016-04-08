@@ -1,4 +1,4 @@
-gem 'first_logic_template'
+# gem 'first_logic_template'
 require 'fl_template'
 
 require 'optparse'
