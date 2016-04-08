@@ -1,0 +1,23 @@
+BEGIN  Template Load Test ======================================
+Job Description (to 80 chars)................ = Template Load Test
+Job Owner (to 20 chars)...................... = dvn
+Base directory............................... = E:\CLIENT\CMS000\000000\PS01\DATA
+END
+
+* db file will be created and initialized with template structures
+* if file does not exist.  template structures are assumed to 
+* exist if the db file already exists.
+BEGIN  Auxiliary Files =========================================
+Sqlite DB (path & file name)................. = E:\CLIENT\CMS000\000000\PS01\DATA\sqlite.db
+Create db template framework (y/N)........... = N
+Default Format (path & file.fmt)............. = E:\CLIENT\CMS000\000000\PS01\DATA\PWPREP.FMT
+Default DEF (path & file.def)................ = E:\CLIENT\CMS000\000000\PS01\DATA\PWPREP.DEF
+END
+ 
+BEGIN  Input File ==============================================
+Input File Name (path & file name)........... = E:\CLIENT\ABC123\614506\PS01\DATA\PWPREP.TXT
+Override Default Format (path & file)........ = 
+Override Default DEF (path & file)........... = 
++ Filter (to 512 chars)...................... = 
+END
+ 
