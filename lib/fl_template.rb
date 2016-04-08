@@ -1,5 +1,4 @@
 require 'active_record'
-require 'active_record/migration'
 
 require_relative '../lib/ext/fl_regex'
 require_relative '../lib/classes/template'
