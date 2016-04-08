@@ -5,8 +5,6 @@ require 'optparse'
 require 'singleton'
 require 'pp'
 
-DBDDL = File.read('./sql/db_ddl.sql').split(';')
-
 module TemplateLoader
   OptionsStruct = Struct.new(:template,:db)
 
@@ -71,28 +69,23 @@ module TemplateLoader
     end
   end
 
-  puts '++ fl_template_loader parsing cmd line'
   CmdLineParser.parse(ARGV)
 
   # setup db connection if options are valid
   if CmdLineOptions.valid?
-    conn = ActiveRecord::Base.establish_connection(
-        adapter:'sqlite3',
-        database:CmdLineOptions.db
-    )
+    conn = ActiveRecord::Base.establish_connection(adapter:'sqlite3',database:CmdLineOptions.db)
 
-    puts '++ fl_template_loader connecting to db'
+    # create fl_template framework of tables if fl_templates table is not found
     unless ActiveRecord::Base.connection.tables.map(&:downcase).include?('fl_templates')
-      DBDDL.each {|sql| conn.connection.execute(sql<<';') unless sql.strip.size == 0 }
+      FL_Template::DBDDL.each {|sql| conn.connection.execute(sql) unless sql.strip.size == 0 }
       conn.connection.execute('PRAGMA foreign_keys = on;')
     end
 
+    # load the specified template in
     tmp = FL_Template::Template.create!(app_id:'flload',app_name:'Template Loader')
     tmp.import(CmdLineOptions.template)
-    puts "++ fl_template_loader imported template to id #{FL_Template::Template.last.id}"
-
+    puts "Template #{CmdLineOptions.template} loaded with id(#{tmp.last.id})"
   end
-
 
 end
 

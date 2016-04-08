@@ -50,4 +50,3 @@ CREATE TABLE fl_instruction_tags(
 CREATE UNIQUE INDEX instruction_tag_unq ON fl_instruction_tags (instruction_id ASC, tag ASC);
 
 PRAGMA FOREIGN_KEYS = on;
-
