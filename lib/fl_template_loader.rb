@@ -1,9 +1,10 @@
-require 'active_record'
-require_relative '../lib/fl_template'
+gem 'first_logic_template'
+require 'fl_template'
 
 require 'optparse'
 require 'singleton'
 require 'pp'
+pp $LOAD_PATH
 
 module TemplateLoader
   OptionsStruct = Struct.new(:template,:db)

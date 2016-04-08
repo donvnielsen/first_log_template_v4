@@ -13,7 +13,11 @@ require 'progressbar'
 
 module FL_Template
   ROOTDIR = __dir__
+  # because sqlite cannot handle multiple statements in one file, each
+  # statement is split (using ;) into an array of statements, where
+  # the array should be iterated over and each submitted separately.
   DBDDL = File.read(
       File.join(FL_Template::ROOTDIR,'sql','db_ddl.sql')
   ).split(';').map{|sql| sql.strip.nil? ? nil : sql.strip<<';'}
+  p DBDDL
 end
