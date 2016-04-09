@@ -145,7 +145,7 @@ class Block < ActiveRecord::Base
              BlockTag.where('block_id = ? and tag = ?',self.id,tag)
          end
     raise ArgumentError,"Tag '#{tag}' not applied to block" if tag != :all && tt.count == 0
-    tt.each {|tag| tag.destroy}
+    tt.each {|t| t.destroy}
   end
 
   protected

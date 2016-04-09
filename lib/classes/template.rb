@@ -50,7 +50,7 @@ class Template < ActiveRecord::Base
               break unless FL_Regex::RGX_COMMENT.match(tmp[k-1])
               idx.last[0] -= 1
             }
-            idx <<[nil,nil]
+            idx << [nil,nil]
         end
       }
       idx.pop  # delete last index created by template's final END
