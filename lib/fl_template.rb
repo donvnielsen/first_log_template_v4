@@ -19,5 +19,4 @@ module FL_Template
   DBDDL = File.read(
       File.join(FL_Template::ROOTDIR,'sql','db_ddl.sql')
   ).split(';').map{|sql| sql.strip.nil? ? nil : sql.strip<<';'}
-  p DBDDL
 end
