@@ -85,6 +85,7 @@ class Instruction < ActiveRecord::Base
   # @option params [Integer] :seq_id when inserting a new instruction
   def initialize(params)
     @params  = params
+    @seq_id = nil
     raise ArgumentError,'Block_id is required' unless @params.has_key?(:block_id) && !@params[:block_id].nil?
     raise ArgumentError,'Block_id not found' if Block.find(@params[:block_id]).nil?
     if @params.has_key?(:ins)
