@@ -1,11 +1,9 @@
-# gem 'first_logic_template'
-
+gem 'first_logic_template'
 require 'fl_template'
 
 require 'optparse'
 require 'singleton'
 require 'pp'
-pp $LOAD_PATH
 
 module TemplateLoader
   OptionsStruct = Struct.new(:template,:db)
@@ -86,7 +84,7 @@ module TemplateLoader
     # load the specified template in
     tmp = FL_Template::Template.create!(app_id:'flload',app_name:'Template Loader')
     tmp.import(CmdLineOptions.template)
-    puts "Template #{CmdLineOptions.template} loaded with id(#{tmp.last.id})"
+    puts "Template #{CmdLineOptions.template} loaded with id(#{FL_Template::Template.last.id})"
   end
 
 end

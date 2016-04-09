@@ -30,7 +30,7 @@ class Template < ActiveRecord::Base
   def import(fl)
     self.transaction do
 
-      raise IOError, "File #{fl} cannot be found" unless FileTest.exists?(fl)
+      raise IOError, "File #{fl} cannot be found" unless FileTest.exist?(fl)
       self.update(input_file_name:fl)
 
       # locate BEGIN and END of each block

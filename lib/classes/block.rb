@@ -25,7 +25,7 @@ class Block < ActiveRecord::Base
   after_destroy :update_seq_ids
 
   # attr_reader :params
-  attr_accessor :block
+  attr_reader :block
 
   def Block.parse(o)
     raise ArgumentError,'instruction block must be an array' unless o.is_a?(Array)
