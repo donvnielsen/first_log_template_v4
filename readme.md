@@ -20,8 +20,7 @@ ends with and END instruction, which is followed by nothing.
 
 Within the BEGIN/END are the instructions. Each instruction has a free-form parameter and argument 
 that are separated by an equal sign. Periods may follow the parameter text between the text and 
-the equal sign. This provides convenient visual for lining up all the arguments within a block.
-
+the equal sign. This provides convenient visual for lining up all the arguments within a block. 
 What the instructions are and how they are interpreted is completely up to your application.
 
 _Naming the framework FirstLogic is a homage to the original developers of the framework, 
