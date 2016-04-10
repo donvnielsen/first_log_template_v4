@@ -25,8 +25,8 @@ the equal sign. This provides convenient visual for lining up all the arguments 
 What the instructions are and how they are interpreted is completely up to your application.
 
 _Naming the framework FirstLogic is a homage to the original developers of the framework, 
-FirstLogic (now Satori Software.) FirstLogic evolved from PostalSoft, with FirstLogic being  
-later acquired by Business Objects, which was later acquired by SAP, who was not very
+FirstLogic (now Satori Software.) FirstLogic evolved from PostalSoft, with FirstLogic being 
+later acquired by Business Objects, which was later acquired by SAP, who was not very 
 interested in the original PostalSoft software. The products were shriveling on the SAP vine 
 when a number of dedicated past employees and investors acquired brand and the software line 
 from SAP._
