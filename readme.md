@@ -4,7 +4,7 @@ First Logic Template was written using the Ruby V2 language to provide generaliz
 functionality needed to work import and manipulate control template that follow 
 First Logic's design structure using . That structure of a template text file is 
 made up instruction blocks.  Instruction blocks contain instructions that are 
-formatted as "parameter = argument".  As an example block:
+formatted as "parameter = argument". As an example block:
 
 ```
 BEGIN  Template Loader Test ======================================
