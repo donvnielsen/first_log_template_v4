@@ -1,9 +1,10 @@
 # FirstLogic Template
 
-First Logic Template provides the functionality needed to work import and manipulate
-control template that follow First Logic's design structure. That structure is 
-a template text file made up instruction blocks.  Instruction blocks contain
-instructions that are formatted as "parameter = argument".  As an example block:
+First Logic Template was written using the Ruby V2 language to provide generalize 
+functionality needed to work import and manipulate control template that follow 
+First Logic's design structure using . That structure of a template text file is 
+made up instruction blocks.  Instruction blocks contain instructions that are 
+formatted as "parameter = argument".  As an example block:
 
 ```
 BEGIN  Template Loader Test ======================================
@@ -20,12 +21,11 @@ ends with and END instruction, which is followed by nothing.
 
 Within the BEGIN/END are the instructions. Each instruction has a free-form parameter and argument 
 that are separated by an equal sign. Periods may follow the parameter text between the text and 
-the equal sign. This provides convenient visual for lining up all the arguments within a block.
-
+the equal sign. This provides convenient visual for lining up all the arguments within a block. 
 What the instructions are and how they are interpreted is completely up to your application.
 
 _Naming the framework FirstLogic is a homage to the original developers of the framework, 
-FirstLogic (now Satori Software.) FirstLogic evolved from PostalSoft, with FirstLogic being  
+FirstLogic (now Satori Software.) FirstLogic evolved from PostalSoft, with FirstLogic being   
 later acquired by Business Objects, which was later acquired by SAP, who was not very
 interested in the original PostalSoft software. The products were shriveling on the SAP vine 
 when a number of dedicated past employees and investors acquired brand and the software line 
